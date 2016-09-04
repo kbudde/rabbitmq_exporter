@@ -40,46 +40,76 @@ Example
 
 ### Metrics
 
-#### Overview
+#### Global 
 
-Total number of:
 
-* channels
-* connections
-* consumers
-* exchanges
-* queues
+metric | description
+-------| ------------
+|up | Was the last scrape of rabbitmq successful.|
+|channelsTotal | Total number of open channels|
+|connectionsTotal | Total number of open connections|
+|consumersTotal | Total number of message consumers|
+|queuesTotal | Total number of queues in use|
+|exchangesTotal | Total number of exchanges in use|
+
 
 #### Queues
 
-For each queue the number of:
+Labels: vhost, queue
 
-* messages_ready
-* messages_unacknowledged
-* messages
-* messages_ready_ram
-* messages_unacknowledged_ram
-* messages_ram
-* messages_persistent
-* message_bytes
-* message_bytes_ready
-* message_bytes_unacknowledged
-* message_bytes_ram
-* message_bytes_persistent
-* disk_reads
-* disk_writes
-* consumers
-* consumer_utilisation
-* memory
-* messages_published_total
-* messages_confirmend_total
-* messages_delivered_total
-* messages_delivered_noack_total
-* messages_get_total
-* messages_get_noack_total
-* messages_redelivered_total
-* messages_returned_total
+##### Gauge
 
+metric | description
+-------| ------------
+|queue_messages_ready|Number of messages ready to be delivered to clients.|
+|queue_messages_unacknowledged|Number of messages delivered to clients but not yet acknowledged.|
+|queue_messages|Sum of ready and unacknowledged messages (queue depth).|
+|queue_messages_ready_ram|Number of messages from messages_ready which are resident in ram.|
+|queue_messages_unacknowledged_ram|Number of messages from messages_unacknowledged which are resident in ram.|
+|queue_messages_ram|Total number of messages which are resident in ram.|
+|queue_messages_persistent|Total number of persistent messages in the queue (will always be 0 for transient queues).|
+|queue_message_bytes|Sum of the size of all message bodies in the queue. This does not include the message properties (including headers) or any overhead.|
+|queue_message_bytes_ready|Like message_bytes but counting only those messages ready to be delivered to clients.|
+|queue_message_bytes_unacknowledged|Like message_bytes but counting only those messages delivered to clients but not yet acknowledged.|
+|queue_message_bytes_ram|Like message_bytes but counting only those messages which are in RAM.|
+|queue_message_bytes_persistent|Like message_bytes but counting only those messages which are persistent.|
+|queue_consumers|Number of consumers.|
+|queue_consumer_utilisation|Fraction of the time (between 0.0 and 1.0) that the queue is able to immediately deliver messages to consumers. This can be less than 1.0 if consumers are limited by network congestion or prefetch count.|
+|queue_memory|Bytes of memory consumed by the Erlang process associated with the queue, including stack, heap and internal structures.|
+
+##### Counter
+
+metric | description
+-------| ------------
+|queue_disk_reads|Total number of times messages have been read from disk by this queue since it started.|
+|queue_disk_writes|Total number of times messages have been written to disk by this queue since it started.|
+|queue_messages_published_total|Count of messages published.|
+|queue_messages_confirmed_total|Count of messages confirmed. |
+|queue_messages_delivered_total|Count of messages delivered in acknowledgement mode to consumers.|
+|queue_messages_delivered_noack_total|Count of messages delivered in no-acknowledgement mode to consumers. |
+|queue_messages_get_total|Count of messages delivered in acknowledgement mode in response to basic.get.|
+|queue_messages_get_noack_total|Count of messages delivered in no-acknowledgement mode in response to basic.get.|
+|queue_messages_redelivered_total|Count of subset of messages in deliver_get which had the redelivered flag set.|
+|queue_messages_returned_total|Count of messages returned to publisher as unroutable.|
+
+#### Exchanges - Counter
+
+Labels: vhost, exchange
+
+metric | description
+-------| ------------
+|exchange_messages_published_total|Count of messages published.|
+|exchange_messages_published_in_total|Count of messages published in to an exchange, i.e. not taking account of routing.|
+|exchange_messages_published_out_total|Count of messages published out of an exchange, i.e. taking account of routing.|
+|exchange_messages_confirmed_total|Count of messages confirmed. |
+|exchange_messages_delivered_total|Count of messages delivered in acknowledgement mode to consumers.|
+|exchange_messages_delivered_noack_total|Count of messages delivered in no-acknowledgement mode to consumers. |
+|exchange_messages_get_total|Count of messages delivered in acknowledgement mode in response to basic.get.|
+|exchange_messages_get_noack_total|Count of messages delivered in no-acknowledgement mode in response to basic.get.|
+|exchange_messages_ack_total|Count of messages delivered in acknowledgement mode in response to basic.get.|
+|exchange_messages_redelivered_total|Count of subset of messages in deliver_get which had the redelivered flag set.|
+|exchange_messages_returned_total|Count of messages returned to publisher as unroutable.|
+	
 ## Docker
 
 To create a docker image locally it is recommened to use the Makefile.
