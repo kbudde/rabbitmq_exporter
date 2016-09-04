@@ -22,7 +22,7 @@ func createTestserver(result int, answer string) *httptest.Server {
 	}))
 }
 
-func TestOverview(t *testing.T) {
+func TestGetMetricMap(t *testing.T) {
 	// Test server that always responds with 200 code, and specific payload
 	server := createTestserver(200, `{"nonFloat":"bob@example.com","float1":1.23456789101112,"number":2}`)
 	defer server.Close()
@@ -31,7 +31,7 @@ func TestOverview(t *testing.T) {
 		RabbitURL: server.URL,
 	}
 
-	overview, _ := getOverviewMap(*config)
+	overview, _ := getMetricMap(*config, "overview")
 
 	expect(t, len(overview), 2)
 	expect(t, overview["float1"], 1.23456789101112)
@@ -45,7 +45,7 @@ func TestOverview(t *testing.T) {
 		RabbitURL: errorServer.URL,
 	}
 
-	overview, _ = getOverviewMap(*config)
+	overview, _ = getMetricMap(*config, "overview")
 
 	expect(t, len(overview), 0)
 }
@@ -59,7 +59,8 @@ func TestQueues(t *testing.T) {
 		RabbitURL: server.URL,
 	}
 
-	queues, _ := getQueueInfo(*config)
+	queues, err := getStatsInfo(*config, "queues")
+	expect(t, err, nil)
 	expect(t, len(queues), 2)
 	expect(t, queues[0].name, "Queue1")
 	expect(t, queues[0].vhost, "")
@@ -80,8 +81,10 @@ func TestQueues(t *testing.T) {
 		RabbitURL: errorServer.URL,
 	}
 
-	queues, _ = getQueueInfo(*config)
-
+	queues, err = getStatsInfo(*config, "queues")
+	if err == nil {
+		t.Errorf("Request failed. An error was expected but not found")
+	}
 	expect(t, len(queues), 0)
 }
 
@@ -95,7 +98,8 @@ func TestExchanges(t *testing.T) {
 		RabbitURL: server.URL,
 	}
 
-	exchanges := getExchangeInfo(*config)
+	exchanges, err := getStatsInfo(*config, "exchanges")
+	expect(t, err, nil)
 	expect(t, len(exchanges), 9)
 	expect(t, exchanges[0].name, "")
 	expect(t, exchanges[0].vhost, "/")
@@ -119,7 +123,9 @@ func TestExchanges(t *testing.T) {
 		RabbitURL: errorServer.URL,
 	}
 
-	exchanges = getExchangeInfo(*config)
-
+	exchanges, err = getStatsInfo(*config, "exchanges")
+	if err == nil {
+		t.Errorf("Request failed. An error was expected but not found")
+	}
 	expect(t, len(exchanges), 0)
 }
