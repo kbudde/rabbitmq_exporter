@@ -12,14 +12,14 @@ func TestWithInvalidJSON(t *testing.T) {
 	if mm := MakeMap(invalidJSONDecoder); mm == nil {
 		t.Errorf("Json is invalid. Empty map should be returned. Value: %v", mm)
 	}
-	if qi := MakeQueueInfo(invalidJSONDecoder); qi == nil {
+	if qi := MakeStatsInfo(invalidJSONDecoder); qi == nil {
 		t.Errorf("Json is invalid. Empty map should be returned. Value: %v", qi)
 	}
 
 	if mm := MakeMap(nil); mm == nil {
 		t.Errorf("Empty map should be returned. Value: %v", mm)
 	}
-	if qi := MakeQueueInfo(nil); qi == nil {
+	if qi := MakeStatsInfo(nil); qi == nil {
 		t.Errorf("Empty map should be returned.. Value: %v", qi)
 	}
 }
@@ -50,11 +50,11 @@ func TestMakeMap(t *testing.T) {
 	checkMap(flMap, t, 0)
 }
 
-func TestMakeQueueInfo(t *testing.T) {
+func TestMakeStatsInfo(t *testing.T) {
 	jsonArray := strings.NewReader(`[{"name":"q1", "FloatKey":14,"nes":{"ted":15}},{"name":"q2", "vhost":"foo", "FloatKey":24,"nes":{"ted":25}}]`)
 	decoder := json.NewDecoder(jsonArray)
 
-	qinfo := MakeQueueInfo(decoder)
+	qinfo := MakeStatsInfo(decoder)
 	if qinfo[0].name != "q1" {
 		t.Errorf("unexpected qinfo name: %v", qinfo[0].name)
 	}

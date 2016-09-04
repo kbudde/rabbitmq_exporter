@@ -13,6 +13,7 @@ type exporter struct {
 	queueMetricsCounter map[string]*prometheus.CounterVec
 	overviewMetrics     map[string]prometheus.Gauge
 	upMetric            prometheus.Gauge
+	exchangeMetrics     map[string]*prometheus.CounterVec
 }
 
 func newExporter() *exporter {
@@ -21,14 +22,16 @@ func newExporter() *exporter {
 		queueMetricsCounter: queueCounterVec,
 		overviewMetrics:     overviewMetricDescription,
 		upMetric:            upMetricDescription,
+		exchangeMetrics:     exchangeCounterVec,
 	}
 }
 
 func (e *exporter) fetchRabbit() {
-	rabbitMqOverviewData, overviewError := getOverviewMap(config)
-	rabbitMqQueueData, queueError := getQueueInfo(config)
+	rabbitMqOverviewData, overviewError := getMetricMap(config, "overview")
+	rabbitMqQueueData, queueError := getStatsInfo(config, "queues")
+	exchangeData, exchangeError := getStatsInfo(config, "exchanges")
 
-	if overviewError != nil || queueError != nil {
+	if overviewError != nil || queueError != nil || exchangeError != nil {
 		e.upMetric.Set(0)
 	} else {
 		e.upMetric.Set(1)
@@ -66,6 +69,17 @@ func (e *exporter) fetchRabbit() {
 		}
 	}
 
+	for key, countvec := range e.exchangeMetrics {
+		for _, exchange := range exchangeData {
+			if value, ok := exchange.metrics[key]; ok {
+				log.WithFields(log.Fields{"vhost": exchange.vhost, "exchange": exchange.name, "key": key, "value": value}).Debug("Set exchange metric for key")
+				countvec.WithLabelValues(exchange.vhost, exchange.name).Set(value)
+			} else {
+				//log.WithFields(log.Fields{"queue": queue, "key": key}).Warn("Queue data not found")
+			}
+		}
+	}
+
 	log.Info("Metrics updated successfully.")
 }
 
@@ -80,6 +94,9 @@ func (e *exporter) Describe(ch chan<- *prometheus.Desc) {
 	for _, countervec := range e.queueMetricsCounter {
 		countervec.Describe(ch)
 	}
+	for _, exchangeMetric := range e.exchangeMetrics {
+		exchangeMetric.Describe(ch)
+	}
 }
 
 func (e *exporter) Collect(ch chan<- prometheus.Metric) {
@@ -91,6 +108,9 @@ func (e *exporter) Collect(ch chan<- prometheus.Metric) {
 	}
 	for _, countvec := range e.queueMetricsCounter {
 		countvec.Reset()
+	}
+	for _, exchangeMetric := range e.exchangeMetrics {
+		exchangeMetric.Reset()
 	}
 
 	e.fetchRabbit()
@@ -106,6 +126,10 @@ func (e *exporter) Collect(ch chan<- prometheus.Metric) {
 	}
 	for _, countervec := range e.queueMetricsCounter {
 		countervec.Collect(ch)
+	}
+
+	for _, exchangeMetric := range e.exchangeMetrics {
+		exchangeMetric.Collect(ch)
 	}
 
 	BuildInfo.Collect(ch)

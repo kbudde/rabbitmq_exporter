@@ -3,9 +3,13 @@ package main
 import "github.com/prometheus/client_golang/prometheus"
 
 var (
-	Version   string
-	Revision  string
-	Branch    string
+	//Version of Rabbitmq Exporter is set during build.
+	Version string
+	//Revision of Rabbitmq Exporter is set during build.
+	Revision string
+	//Branch of Rabbitmq Exporter is set during build.
+	Branch string
+	//BuildDate of Rabbitmq Exporter is set during build.
 	BuildDate string
 )
 

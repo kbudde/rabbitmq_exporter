@@ -37,23 +37,23 @@ func loadMetrics(config rabbitExporterConfig, endpoint string) (*json.Decoder, e
 	return json.NewDecoder(bytes.NewBuffer(body)), nil
 }
 
-func getQueueInfo(config rabbitExporterConfig) ([]QueueInfo, error) {
-	var q []QueueInfo
+func getStatsInfo(config rabbitExporterConfig, apiEndpoint string) ([]StatsInfo, error) {
+	var q []StatsInfo
 
-	d, err := loadMetrics(config, "queues")
+	d, err := loadMetrics(config, apiEndpoint)
 	if err != nil {
 		return q, err
 	}
 
-	q = MakeQueueInfo(d)
+	q = MakeStatsInfo(d)
 
 	return q, nil
 }
 
-func getOverviewMap(config rabbitExporterConfig) (MetricMap, error) {
+func getMetricMap(config rabbitExporterConfig, apiEndpoint string) (MetricMap, error) {
 	var overview MetricMap
 
-	d, err := loadMetrics(config, "overview")
+	d, err := loadMetrics(config, apiEndpoint)
 	if err != nil {
 		return overview, err
 	}

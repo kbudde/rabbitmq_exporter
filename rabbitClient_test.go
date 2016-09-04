@@ -84,3 +84,42 @@ func TestQueues(t *testing.T) {
 
 	expect(t, len(queues), 0)
 }
+
+func TestExchanges(t *testing.T) {
+
+	// Test server that always responds with 200 code, and specific payload
+	server := createTestserver(200, exchangeAPIResponse)
+	defer server.Close()
+
+	config := &rabbitExporterConfig{
+		RabbitURL: server.URL,
+	}
+
+	exchanges := getExchangeInfo(*config)
+	expect(t, len(exchanges), 9)
+	expect(t, exchanges[0].name, "")
+	expect(t, exchanges[0].vhost, "/")
+	expect(t, exchanges[1].name, "amq.direct")
+	expect(t, exchanges[1].vhost, "/")
+	expect(t, len(exchanges[0].metrics), 0)
+	expect(t, len(exchanges[1].metrics), 0)
+
+	expect(t, exchanges[8].name, "myExchange")
+	expect(t, exchanges[8].vhost, "/")
+	expect(t, exchanges[8].metrics["message_stats.confirm"], 5.0)
+	expect(t, exchanges[8].metrics["message_stats.publish_in"], 5.0)
+	expect(t, exchanges[8].metrics["message_stats.ack"], 0.0)
+	expect(t, exchanges[8].metrics["message_stats.return_unroutable"], 5.0)
+
+	//Unknown error Server
+	errorServer := createTestserver(500, http.StatusText(500))
+	defer errorServer.Close()
+
+	config = &rabbitExporterConfig{
+		RabbitURL: errorServer.URL,
+	}
+
+	exchanges = getExchangeInfo(*config)
+
+	expect(t, len(exchanges), 0)
+}
