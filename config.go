@@ -17,6 +17,7 @@ var (
 		OutputFormat:       "TTY", //JSON
 		CAFile:             "ca.pem",
 		InsecureSkipVerify: false,
+		SkipQueues:         "^$",
 	}
 )
 
@@ -28,6 +29,7 @@ type rabbitExporterConfig struct {
 	OutputFormat       string
 	CAFile             string
 	InsecureSkipVerify bool
+	SkipQueues         string
 }
 
 func initConfig() {
@@ -62,5 +64,9 @@ func initConfig() {
 	}
 	if insecureSkipVerify := os.Getenv("SKIPVERIFY"); insecureSkipVerify == "true" || insecureSkipVerify == "1" {
 		config.InsecureSkipVerify = true
+	}
+
+	if SkipQueues := os.Getenv("SKIP_QUEUES"); SkipQueues != "" {
+		config.SkipQueues = SkipQueues
 	}
 }

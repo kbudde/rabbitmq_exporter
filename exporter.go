@@ -5,6 +5,8 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/prometheus/client_golang/prometheus"
+	"regexp"
+	"strings"
 )
 
 type exporter struct {
@@ -58,21 +60,22 @@ func (e *exporter) fetchRabbit(ch chan<- prometheus.Metric) {
 	for key, gaugevec := range e.queueMetricsGauge {
 		for _, queue := range rabbitMqQueueData {
 			if value, ok := queue.metrics[key]; ok {
-				log.WithFields(log.Fields{"vhost": queue.vhost, "queue": queue.name, "key": key, "value": value}).Debug("Set queue metric for key")
-				gaugevec.WithLabelValues(queue.vhost, queue.name).Set(value)
-			} else {
-				//log.WithFields(log.Fields{"queue": queue, "key": key}).Warn("Queue data not found")
+				if match, _ := regexp.MatchString(config.SkipQueues, strings.ToLower(queue.name)); !match {
+					log.WithFields(log.Fields{"vhost": queue.vhost, "queue": queue.name, "key": key, "value": value}).Debug("Set queue metric for key")
+					gaugevec.WithLabelValues(queue.vhost, queue.name).Set(value)
+				}
 			}
 		}
 	}
 	for key, countvec := range e.queueMetricsCounter {
 		for _, queue := range rabbitMqQueueData {
 			if value, ok := queue.metrics[key]; ok {
-				log.WithFields(log.Fields{"vhost": queue.vhost, "queue": queue.name, "key": key, "value": value}).Debug("Set queue metric for key")
-				ch <- prometheus.MustNewConstMetric(countvec, prometheus.CounterValue, value, queue.vhost, queue.name)
+				if match, _ := regexp.MatchString(config.SkipQueues, strings.ToLower(queue.name)); !match {
+					log.WithFields(log.Fields{"vhost": queue.vhost, "queue": queue.name, "key": key, "value": value}).Debug("Set queue metric for key")
+					ch <- prometheus.MustNewConstMetric(countvec, prometheus.CounterValue, value, queue.vhost, queue.name)
+				}
 			} else {
 				ch <- prometheus.MustNewConstMetric(countvec, prometheus.CounterValue, 0, queue.vhost, queue.name)
-				//log.WithFields(log.Fields{"queue": queue, "key": key}).Warn("Queue data not found")
 			}
 		}
 	}
@@ -82,8 +85,6 @@ func (e *exporter) fetchRabbit(ch chan<- prometheus.Metric) {
 			if value, ok := exchange.metrics[key]; ok {
 				log.WithFields(log.Fields{"vhost": exchange.vhost, "exchange": exchange.name, "key": key, "value": value}).Debug("Set exchange metric for key")
 				ch <- prometheus.MustNewConstMetric(countvec, prometheus.CounterValue, value, exchange.vhost, exchange.name)
-			} else {
-				//log.WithFields(log.Fields{"queue": queue, "key": key}).Warn("Queue data not found")
 			}
 		}
 	}
