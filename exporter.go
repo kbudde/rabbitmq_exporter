@@ -60,21 +60,27 @@ func (e *exporter) fetchRabbit(ch chan<- prometheus.Metric) {
 	for key, gaugevec := range e.queueMetricsGauge {
 		for _, queue := range rabbitMqQueueData {
 			if value, ok := queue.metrics[key]; ok {
-				if match, _ := regexp.MatchString(config.SkipQueues, strings.ToLower(queue.name)); !match {
-					log.WithFields(log.Fields{"vhost": queue.vhost, "queue": queue.name, "key": key, "value": value}).Debug("Set queue metric for key")
-					gaugevec.WithLabelValues(queue.vhost, queue.name).Set(value)
+				if match_include, _ := regexp.MatchString(config.IncludeQueues, strings.ToLower(queue.name)); match_include {
+					if match_skip, _ := regexp.MatchString(config.SkipQueues, strings.ToLower(queue.name)); !match_skip {
+
+						log.WithFields(log.Fields{"vhost": queue.vhost, "queue": queue.name, "key": key, "value": value}).Debug("Set queue metric for key")
+						gaugevec.WithLabelValues(queue.vhost, queue.name).Set(value)
+					}
 				}
 			}
 		}
 	}
 	for key, countvec := range e.queueMetricsCounter {
 		for _, queue := range rabbitMqQueueData {
-			if match, _ := regexp.MatchString(config.SkipQueues, strings.ToLower(queue.name)); !match {
-				if value, ok := queue.metrics[key]; ok {
-					log.WithFields(log.Fields{"vhost": queue.vhost, "queue": queue.name, "key": key, "value": value}).Debug("Set queue metric for key")
-					ch <- prometheus.MustNewConstMetric(countvec, prometheus.CounterValue, value, queue.vhost, queue.name)
-				} else {
-					ch <- prometheus.MustNewConstMetric(countvec, prometheus.CounterValue, 0, queue.vhost, queue.name)
+			if match_include, _ := regexp.MatchString(config.IncludeQueues, strings.ToLower(queue.name)); match_include {
+				if match_skip, _ := regexp.MatchString(config.SkipQueues, strings.ToLower(queue.name)); !match_skip {
+
+					if value, ok := queue.metrics[key]; ok {
+						log.WithFields(log.Fields{"vhost": queue.vhost, "queue": queue.name, "key": key, "value": value}).Debug("Set queue metric for key")
+						ch <- prometheus.MustNewConstMetric(countvec, prometheus.CounterValue, value, queue.vhost, queue.name)
+					} else {
+						ch <- prometheus.MustNewConstMetric(countvec, prometheus.CounterValue, 0, queue.vhost, queue.name)
+					}
 				}
 			}
 		}

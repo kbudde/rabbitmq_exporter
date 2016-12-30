@@ -18,6 +18,7 @@ var (
 		CAFile:             "ca.pem",
 		InsecureSkipVerify: false,
 		SkipQueues:         "^$",
+		IncludeQueues:      ".*",
 	}
 )
 
@@ -30,6 +31,7 @@ type rabbitExporterConfig struct {
 	CAFile             string
 	InsecureSkipVerify bool
 	SkipQueues         string
+	IncludeQueues      string
 }
 
 func initConfig() {
@@ -68,5 +70,9 @@ func initConfig() {
 
 	if SkipQueues := os.Getenv("SKIP_QUEUES"); SkipQueues != "" {
 		config.SkipQueues = SkipQueues
+	}
+
+	if IncludeQueues := os.Getenv("INCLUDE_QUEUES"); IncludeQueues != "" {
+		config.IncludeQueues = IncludeQueues
 	}
 }

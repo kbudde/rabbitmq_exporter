@@ -34,7 +34,8 @@ Settings:
 * LOG_LEVEL:       "info", // can be "debug", "info", "warning", "error", "fatal", or "panic"
 * CAFILE:          "ca.pem", // default is ca.pem. If file does not exist it will be ignored.
 * SKIPVERIFY:      false or 0, true or 1 // will skip hostname/certificate check at all
-* SKIP_QUEUES:     "^$", // regex, matching queue names are not exported (useful for short-lived rpc queues)
+* INCLUDE_QUEUES:  ".*", // regex, matching queue names are exported
+* SKIP_QUEUES:     "^$", // regex, matching queue names are not exported (useful for short-lived rpc queues). First performed INCLUDE, after SKIP
 
 Example
 
