@@ -62,9 +62,9 @@ var (
 		"disk_free_alarm": newDesc("node_disk_free_alarm", "Whether the disk alarm has gone off.", nodeLabels),
 		"disk_free_limit": newDesc("node_disk_free_limit", "Point at which the disk alarm will go off.", nodeLabels),
 		"fd_used":         newDesc("fd_used", "Used File descriptors", nodeLabels),
-		"fd_limit":        newDesc("fd_limit", "File descriptors available", nodeLabels),
-		"socket_used":     newDesc("socket_used", "File descriptors used as sockets.", nodeLabels),
-		"socket_limit":    newDesc("socket_limit", "File descriptors available for use as sockets", nodeLabels),
+		"fd_total":        newDesc("fd_total", "File descriptors available", nodeLabels),
+		"sockets_used":    newDesc("sockets_used", "File descriptors used as sockets.", nodeLabels),
+		"sockets_total":   newDesc("sockets_total", "File descriptors available for use as sockets", nodeLabels),
 	}
 
 	exchangeCounterVec = map[string]*prometheus.Desc{
