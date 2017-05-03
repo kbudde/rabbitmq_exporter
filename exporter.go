@@ -93,11 +93,20 @@ func (e *exporter) fetchRabbit(ch chan<- prometheus.Metric) {
 		}
 	}
 
+	log.WithField("exchangeData", exchangeData).Debug("Exchange data")
 	for key, countvec := range e.exchangeMetrics {
 		for _, exchange := range exchangeData {
 			if value, ok := exchange.metrics[key]; ok {
 				log.WithFields(log.Fields{"vhost": exchange.vhost, "exchange": exchange.name, "key": key, "value": value}).Debug("Set exchange metric for key")
 				ch <- prometheus.MustNewConstMetric(countvec, prometheus.CounterValue, value, exchange.vhost, exchange.name)
+			}
+		}
+	}
+	for key, countvec := range e.exchangeMetrics {
+		for _, queue := range rabbitMqQueueData {
+			if value, ok := queue.metrics[key]; ok {
+				log.WithFields(log.Fields{"vhost": queue.vhost, "exchange": queue.name, "key": key, "value": value}).Debug("Set exchange metric for key")
+				ch <- prometheus.MustNewConstMetric(countvec, prometheus.CounterValue, value, queue.vhost, queue.name)
 			}
 		}
 	}
