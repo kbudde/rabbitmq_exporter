@@ -51,6 +51,7 @@ var (
 		"message_stats.get_noack":     newDesc("queue_messages_get_noack_total", "Count of messages delivered in no-acknowledgement mode in response to basic.get.", queueLabels),
 		"message_stats.redeliver":     newDesc("queue_messages_redelivered_total", "Count of subset of messages in deliver_get which had the redelivered flag set.", queueLabels),
 		"message_stats.return":        newDesc("queue_messages_returned_total", "Count of messages returned to publisher as unroutable.", queueLabels),
+		"message_stats.ack":           newDesc("queue_messages_ack_total", "Count of messages delivered in acknowledgement mode in response to basic.get.", queueLabels),
 	}
 
 	nodeCounterVec = map[string]*prometheus.Desc{
