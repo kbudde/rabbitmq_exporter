@@ -26,17 +26,19 @@ Disadvantage: you have to publish the port (9090) in the rabbitmq container.
 Rabbitmq_exporter uses environment variables for configuration.
 Settings:
 
-* RABBIT_URL:      "http://localhost:15672",
-* RABBIT_USER:     "guest",
-* RABBIT_PASSWORD: "guest",
-* PUBLISH_PORT:    "9090",
-* OUTPUT_FORMAT:   "TTY", //change to JSON if needed
-* LOG_LEVEL:       "info", // can be "debug", "info", "warning", "error", "fatal", or "panic"
-* CAFILE:          "ca.pem", // default is ca.pem. If file does not exist it will be ignored.
-* SKIPVERIFY:      false or 0, true or 1 // will skip hostname/certificate check at all
-* INCLUDE_QUEUES:  ".*", // regex, matching queue names are exported
-* SKIP_QUEUES:     "^$", // regex, matching queue names are not exported (useful for short-lived rpc queues). First performed INCLUDE, after SKIP
-* RABBIT_CAPABILITIES: "", // comma-separated list of extended scraping capabilities supported by the target RabbitMQ server
+* RABBIT_URL:           "http://localhost:15672",
+* RABBIT_USER:          "guest",
+* RABBIT_USER_FILE:     "", // location of file with username 
+* RABBIT_PASSWORD:      "guest",
+* RABBIT_PASSWORD_FILE: "", // location of file with password
+* PUBLISH_PORT:         "9090",
+* OUTPUT_FORMAT:        "TTY", //change to JSON if needed
+* LOG_LEVEL:            "info", // can be "debug", "info", "warning", "error", "fatal", or "panic"
+* CAFILE:               "ca.pem", // default is ca.pem. If file does not exist it will be ignored.
+* SKIPVERIFY:           false or 0, true or 1 // will skip hostname/certificate check at all
+* INCLUDE_QUEUES:       ".*", // regex, matching queue names are exported
+* SKIP_QUEUES:          "^$", // regex, matching queue names are not exported (useful for short-lived rpc queues). First performed INCLUDE, after SKIP
+* RABBIT_CAPABILITIES:  "", // comma-separated list of extended scraping capabilities supported by the target RabbitMQ server
 
 Example
 

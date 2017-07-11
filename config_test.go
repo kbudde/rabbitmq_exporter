@@ -46,6 +46,28 @@ func TestEnvironmentSettingPassword(t *testing.T) {
 	}
 }
 
+func TestEnvironmentSettingUserFile(t *testing.T) {
+	fileValue := "./testdata/username_file"
+	newValue := "username"
+	os.Setenv("RABBIT_USER_FILE", fileValue)
+	defer os.Unsetenv("RABBIT_USER_FILE")
+	initConfig()
+	if config.RabbitUsername != newValue {
+		t.Errorf("Expected config.RABBIT_USER to be modified. Found=%v, expected=%v", config.RabbitUsername, newValue)
+	}
+}
+
+func TestEnvironmentSettingPasswordFile(t *testing.T) {
+	fileValue := "./testdata/password_file"
+	newValue := "password"
+	os.Setenv("RABBIT_PASSWORD_FILE", fileValue)
+	defer os.Unsetenv("RABBIT_PASSWORD_FILE")
+	initConfig()
+	if config.RabbitPassword != newValue {
+		t.Errorf("Expected config.RABBIT_PASSWORD to be modified. Found=%v, expected=%v", config.RabbitPassword, newValue)
+	}
+}
+
 func TestEnvironmentSettingPort(t *testing.T) {
 	newValue := "9091"
 	os.Setenv("PUBLISH_PORT", newValue)
