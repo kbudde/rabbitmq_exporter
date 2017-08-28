@@ -46,6 +46,11 @@ func loadMetrics(config rabbitExporterConfig, endpoint string) (RabbitReply, err
 	}
 
 	req, err := http.NewRequest("GET", config.RabbitURL+"/api/"+endpoint+args, nil)
+	if err != nil {
+		log.WithFields(log.Fields{"error": err, "host": config.RabbitURL}).Error("Error while constructing rabbitHost request")
+		return nil, errors.New("Error while constructing rabbitHost request")
+	}
+
 	req.SetBasicAuth(config.RabbitUsername, config.RabbitPassword)
 	req.Header.Add("Accept", acceptContentType(config))
 
