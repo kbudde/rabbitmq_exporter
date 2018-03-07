@@ -41,6 +41,8 @@ vet:
 
 build: promu
 	@echo ">> building binaries"
+	@ls -la /go/src/github.com/anchorfree/rabbitmq_exporter/
+#	@ln -s "/go/src/github.com/anchorfree/rabbitmq_exporter/ /go/src/github.com/anchorfree/rabbitmq_exporter/rabbitmq_exporter"
 	@$(PROMU) build --prefix $(PREFIX)
 
 tarball: promu

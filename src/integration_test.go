@@ -12,7 +12,7 @@ import (
 
 	"strings"
 
-	"github.com/kbudde/rabbitmq_exporter/testenv"
+	"github.com/anchorfree/rabbitmq_exporter/testenv"
 )
 
 func TestQueueCount(t *testing.T) {
