@@ -215,9 +215,9 @@ _disabled by default_
 Labels: cluster, vhost, shovel, type, self, state
 
 
-metric | description
--------| ------------
-|shovel_status|A metric with a value of constant '1' for each shovel in a certain state|
+| metric | description |
+| ------ | ----------- |
+| shovel_status | A metric with a value of constant '1' for each shovel in a certain state |
 
 ## Docker
 
