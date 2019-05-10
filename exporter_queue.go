@@ -43,19 +43,20 @@ var (
 	}
 
 	queueCounterVec = map[string]*prometheus.Desc{
-		"disk_reads":                   newDesc("queue_disk_reads_total", "Total number of times messages have been read from disk by this queue since it started.", queueLabels),
-		"disk_writes":                  newDesc("queue_disk_writes_total", "Total number of times messages have been written to disk by this queue since it started.", queueLabels),
-		"message_stats.publish":        newDesc("queue_messages_published_total", "Count of messages published.", queueLabels),
-		"message_stats.confirm":        newDesc("queue_messages_confirmed_total", "Count of messages confirmed. ", queueLabels),
-		"message_stats.deliver":        newDesc("queue_messages_delivered_total", "Count of messages delivered in acknowledgement mode to consumers.", queueLabels),
-		"message_stats.deliver_no_ack": newDesc("queue_messages_delivered_noack_total", "Count of messages delivered in no-acknowledgement mode to consumers. ", queueLabels),
-		"message_stats.get":            newDesc("queue_messages_get_total", "Count of messages delivered in acknowledgement mode in response to basic.get.", queueLabels),
-		"message_stats.get_no_ack":     newDesc("queue_messages_get_noack_total", "Count of messages delivered in no-acknowledgement mode in response to basic.get.", queueLabels),
-		"message_stats.redeliver":      newDesc("queue_messages_redelivered_total", "Count of subset of messages in deliver_get which had the redelivered flag set.", queueLabels),
-		"message_stats.return":         newDesc("queue_messages_returned_total", "Count of messages returned to publisher as unroutable.", queueLabels),
-		"message_stats.ack":            newDesc("queue_messages_ack_total", "Count of messages delivered in acknowledgement mode in response to basic.get.", queueLabels),
-		"reductions":                   newDesc("queue_reductions_total", "Count of  reductions which take place on this process. .", queueLabels),
-		"garbage_collection.minor_gcs": newDesc("queue_gc_minor_collections_total", "Number of minor GCs", queueLabels),
+		"disk_reads":                   		newDesc("queue_disk_reads_total", "Total number of times messages have been read from disk by this queue since it started.", queueLabels),
+		"disk_writes":                  		newDesc("queue_disk_writes_total", "Total number of times messages have been written to disk by this queue since it started.", queueLabels),
+		"message_stats.publish":        		newDesc("queue_messages_published_total", "Count of messages published.", queueLabels),
+		"message_stats.confirm":        		newDesc("queue_messages_confirmed_total", "Count of messages confirmed. ", queueLabels),
+		"message_stats.deliver":        		newDesc("queue_messages_delivered_total", "Count of messages delivered in acknowledgement mode to consumers.", queueLabels),
+		"message_stats.deliver_no_ack": 		newDesc("queue_messages_delivered_noack_total", "Count of messages delivered in no-acknowledgement mode to consumers. ", queueLabels),
+		"message_stats.get":            		newDesc("queue_messages_get_total", "Count of messages delivered in acknowledgement mode in response to basic.get.", queueLabels),
+		"message_stats.get_no_ack":     		newDesc("queue_messages_get_noack_total", "Count of messages delivered in no-acknowledgement mode in response to basic.get.", queueLabels),
+		"message_stats.redeliver":      		newDesc("queue_messages_redelivered_total", "Count of subset of messages in deliver_get which had the redelivered flag set.", queueLabels),
+		"message_stats.redeliver_details.rate": newDesc("queue_messages_redeliver_rate", "The rate that redelivered messages are coming in.", queueLabels),
+		"message_stats.return":         		newDesc("queue_messages_returned_total", "Count of messages returned to publisher as unroutable.", queueLabels),
+		"message_stats.ack":            		newDesc("queue_messages_ack_total", "Count of messages delivered in acknowledgement mode in response to basic.get.", queueLabels),
+		"reductions":                   		newDesc("queue_reductions_total", "Count of  reductions which take place on this process. .", queueLabels),
+		"garbage_collection.minor_gcs": 		newDesc("queue_gc_minor_collections_total", "Number of minor GCs", queueLabels),
 	}
 )
 
