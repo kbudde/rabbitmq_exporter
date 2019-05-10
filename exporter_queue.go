@@ -40,6 +40,7 @@ var (
 		"garbage_collection.min_heap_size":      newGaugeVec("queue_gc_min_heap", "Minimum heap size in words", queueLabels),
 		"garbage_collection.min_bin_vheap_size": newGaugeVec("queue_gc_min_vheap", "Minimum binary virtual heap size in words", queueLabels),
 		"garbage_collection.fullsweep_after":    newGaugeVec("queue_gc_collections_before_fullsweep", "Maximum generational collections before fullsweep", queueLabels),
+		"message_stats.redeliver_details.rate":  newGaugeVec("queue_messages_redeliver_rate", "The rate that redelivered messages are coming in.", queueLabels),
 	}
 
 	queueCounterVec = map[string]*prometheus.Desc{
@@ -52,7 +53,6 @@ var (
 		"message_stats.get":            		newDesc("queue_messages_get_total", "Count of messages delivered in acknowledgement mode in response to basic.get.", queueLabels),
 		"message_stats.get_no_ack":     		newDesc("queue_messages_get_noack_total", "Count of messages delivered in no-acknowledgement mode in response to basic.get.", queueLabels),
 		"message_stats.redeliver":      		newDesc("queue_messages_redelivered_total", "Count of subset of messages in deliver_get which had the redelivered flag set.", queueLabels),
-		"message_stats.redeliver_details.rate": newDesc("queue_messages_redeliver_rate", "The rate that redelivered messages are coming in.", queueLabels),
 		"message_stats.return":         		newDesc("queue_messages_returned_total", "Count of messages returned to publisher as unroutable.", queueLabels),
 		"message_stats.ack":            		newDesc("queue_messages_ack_total", "Count of messages delivered in acknowledgement mode in response to basic.get.", queueLabels),
 		"reductions":                   		newDesc("queue_reductions_total", "Count of  reductions which take place on this process. .", queueLabels),

@@ -23,7 +23,7 @@ var (
 		"queue_totals.messages":                newGaugeVec("queue_messages_global", "Number ready and unacknowledged messages in cluster.", overviewLabels),
 		"queue_totals.messages_ready":          newGaugeVec("queue_messages_ready_global", "Number of messages ready to be delivered to clients.", overviewLabels),
 		"queue_totals.messages_unacknowledged": newGaugeVec("queue_messages_unacknowledged_global", "Number of messages delivered to clients but not yet acknowledged.", overviewLabels),
-		"redeliver_details.rate":				newGuageVec("queue_redelivery_rate", "Total redelivery rate for all queues", overviewLabels),
+		"message_stats.redeliver_details.rate":	newGaugeVec("queue_redelivery_rate", "Total redelivery rate for all queues", overviewLabels),
 	}
 
 	rabbitmqVersionMetric = prometheus.NewGaugeVec(
