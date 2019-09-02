@@ -226,3 +226,45 @@ metric | description
 To create a docker image locally normal docker build can be used.
 
        docker build .
+
+## Kubernetes
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rmq-exporter
+spec:
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9419"
+      labels:
+        app: rmq
+    spec:
+      containers:
+      - name: rmq-exporter
+        image: kbudde/rabbitmq-exporter:latest
+        resources:
+          requests:
+            cpu: 10m
+            memory: 10Mi
+        ports:
+        - containerPort: 9419
+        # All variables look at https://github.com/kbudde/rabbitmq_exporter#configuration
+        env:
+        - name: RABBIT_URL
+          value: http://rabbitmq:15672
+        - name: guest
+          value: rabbit
+        - name: RABBIT_PASSWORD
+          value: guest
+```
+
+## Grafana
+
+[Example of dashboard](grafana-example.json)
+
+![Screenshot](grafana-example.png)
