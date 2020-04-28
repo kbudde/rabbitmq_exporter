@@ -16,11 +16,11 @@ The rabbitmq_exporter is sharing the network interface with the rabbitmq contain
 
 1. Start rabbitMQ
 
-        docker run -d -e RABBITMQ_NODENAME=my-rabbit --name my-rabbit -p 9419:9419 rabbitmq:3-management
+        docker run -d -e RABBITMQ_NODENAME=my-rabbit --name my-rabbit -p 15672:15672 -p 25672:25672 rabbitmq:3-management
 
 1. Start rabbitmq_exporter in container.
 
-        docker run -d --net=container:my-rabbit kbudde/rabbitmq-exporter
+        docker run -d --net=container:my-rabbit -p 9419:9419 kbudde/rabbitmq-exporter
 
 Now your metrics are exposed through [http://host:9419/metrics](http://host:9419/metrics). The management plugin does not need to be exposed.
 
