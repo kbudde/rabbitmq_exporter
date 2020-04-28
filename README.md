@@ -16,7 +16,7 @@ The rabbitmq_exporter is sharing the network interface with the rabbitmq contain
 
 1. Start rabbitMQ
 
-        docker run -d -e RABBITMQ_NODENAME=my-rabbit --name my-rabbit -p 15672:15672 -p 25672:25672 rabbitmq:3-management
+        docker run -d -e RABBITMQ_NODENAME=my-rabbit --name my-rabbit rabbitmq:3-management
 
 1. Start rabbitmq_exporter in container.
 
