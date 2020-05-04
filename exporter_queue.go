@@ -178,7 +178,7 @@ func (e exporterQueue) Collect(ctx context.Context, ch chan<- prometheus.Metric)
 		idleSince, exists := queue.labels["idle_since"]
 		if exists && idleSince != "" {
 			if t, err := time.Parse("2006-01-02 15:04:05", idleSince); err == nil {
-				unixSeconds := (float64(time.Now().UnixNano()) / 1e9) - (float64(t.UnixNano()) / 1e9)
+				unixSeconds := (float64(time.Now().UnixNano()) - float64(t.UnixNano())) / 1e9
 				state := queue.labels["state"]
 				if state == "running" { //replace running state with idle if idle_since time is provided. Other states (flow, etc.) are not replaced
 					state = "idle"
