@@ -25,7 +25,7 @@ jobs:
       -
         name: Docker meta
         id: docker_meta
-        uses: crazy-max/ghaction-docker-meta@v1.11.0
+        uses: crazy-max/ghaction-docker-meta@v1.12.0
         with:
           images: kbudde/rabbitmq-exporter
           tag-sha: true # add git short SHA as Docker tag
