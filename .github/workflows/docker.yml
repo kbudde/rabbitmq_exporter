@@ -51,7 +51,7 @@ jobs:
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
       - 
         name: Build and push images
-        uses: docker/build-push-action@v2.3.0
+        uses: docker/build-push-action@v2.4.0
         with:
           platforms: ${{ env.PLATFORMS }}
           push: ${{ github.event_name != 'pull_request' }}
