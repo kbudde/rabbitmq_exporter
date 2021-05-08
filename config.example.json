@@ -2,8 +2,7 @@
     "rabbit_url": "http://127.0.0.1:15672",
     "rabbit_user": "guest",
     "rabbit_pass": "guest",
-    "publish_port": "9419",
-    "publish_addr": "",
+    "publish_port": "9149",
     "output_format": "TTY",
     "ca_file": "ca.pem",
     "cert_file": "client-cert.pem",
@@ -15,11 +14,13 @@
     "skip_vhost": "^$",
     "include_vhost": ".*",
     "rabbit_capabilities": "no_sort,bert",
+    "aliveness_vhost": "/",
     "enabled_exporters": [
             "exchange",
             "node",
             "overview",
-            "queue"
+            "queue",
+            "aliveness"
     ],
     "timeout": 30,
     "max_queues": 0

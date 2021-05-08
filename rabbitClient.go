@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 
@@ -29,7 +30,6 @@ func initClient() {
 		if err != nil {
 			log.WithError(err).Error("retriving system cert pool failed")
 		}
-
 	}
 
 	tr := &http.Transport{
@@ -66,7 +66,10 @@ func apiRequest(config rabbitExporterConfig, endpoint string) ([]byte, string, e
 	if enabled && exists {
 		args = "?sort="
 	}
-
+	if endpoint == "aliveness-test" {
+		escapeAlivenessVhost := url.QueryEscape(config.AlivenessVhost)
+		args = "/" + escapeAlivenessVhost
+	}
 	req, err := http.NewRequest("GET", config.RabbitURL+"/api/"+endpoint+args, nil)
 	if err != nil {
 		log.WithFields(log.Fields{"error": err, "host": config.RabbitURL}).Error("Error while constructing rabbitHost request")
@@ -100,6 +103,7 @@ func apiRequest(config rabbitExporterConfig, endpoint string) ([]byte, string, e
 
 func loadMetrics(config rabbitExporterConfig, endpoint string) (RabbitReply, error) {
 	body, content, err := apiRequest(config, endpoint)
+
 	if err != nil {
 		return nil, err
 	}
