@@ -30,6 +30,7 @@ var (
 		SkipVHost:          regexp.MustCompile("^$"),
 		IncludeVHost:       regexp.MustCompile(".*"),
 		RabbitCapabilities: parseCapabilities("no_sort,bert"),
+		AlivenessVhost:     "/",
 		EnabledExporters:   []string{"exchange", "node", "overview", "queue"},
 		Timeout:            30,
 		MaxQueues:          0,
@@ -58,6 +59,7 @@ type rabbitExporterConfig struct {
 	IncludeVHostString       string              `json:"include_vhost"`
 	RabbitCapabilitiesString string              `json:"rabbit_capabilities"`
 	RabbitCapabilities       rabbitCapabilitySet `json:"-"`
+	AlivenessVhost           string              `json:"aliveness_vhost"`
 	EnabledExporters         []string            `json:"enabled_exporters"`
 	Timeout                  int                 `json:"timeout"`
 	MaxQueues                int                 `json:"max_queues"`
@@ -193,6 +195,10 @@ func initConfig() {
 
 	if enabledExporters := os.Getenv("RABBIT_EXPORTERS"); enabledExporters != "" {
 		config.EnabledExporters = strings.Split(enabledExporters, ",")
+	}
+
+	if alivenessVhost := os.Getenv("ALIVENESS_VHOST"); alivenessVhost != "" {
+		config.AlivenessVhost = alivenessVhost
 	}
 
 	if timeout := os.Getenv("RABBIT_TIMEOUT"); timeout != "" {
