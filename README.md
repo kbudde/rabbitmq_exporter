@@ -3,7 +3,7 @@
 Prometheus exporter for RabbitMQ metrics.
 Data is scraped by [prometheus](https://prometheus.io).
 
-Please note this an unofficial plugin. There is also an official plugin from [RabbitMQ.com](https://www.rabbitmq.com/prometheus.html). See [comparison to official exporter](#-Comparison-to-official-exporter)
+Please note this an unofficial plugin. There is also an official plugin from [RabbitMQ.com](https://www.rabbitmq.com/prometheus.html). See [comparison to official exporter](#comparison-to-official-exporter)
 
 ## Installation
 
@@ -268,13 +268,12 @@ metric | description
 
 ## Comparison to official exporter
 
-[official exporter](https://www.rabbitmq.com/prometheus.html).:
+[official exporter](https://www.rabbitmq.com/prometheus.html):
 
 - has runtime/erlang metrics
 - aggregated or per-object metrics
 - missing filter
 
--
 This exporter:
 
 - works also with older versions of rabbitmq
