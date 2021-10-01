@@ -20,7 +20,6 @@ import (
 
 //list of docker tags with rabbitmq versions
 const (
-	RabbitMQ3_5     = "3.5-management"
 	RabbitMQ3Latest = "3-management-alpine"
 )
 
@@ -37,11 +36,12 @@ type TestEnvironment struct {
 
 //NewEnvironment sets up a new environment. It will nlog fatal if something goes wrong
 func NewEnvironment(t *testing.T, dockerTag string) TestEnvironment {
+	t.Helper()
 	tenv := TestEnvironment{t: t}
 
 	pool, err := dockertest.NewPool("")
 	if err != nil {
-		log.Fatalf("Could not connect to docker: %s", err)
+		t.Fatalf("Could not connect to docker: %s", err)
 	}
 
 	tenv.docker = pool
@@ -50,9 +50,12 @@ func NewEnvironment(t *testing.T, dockerTag string) TestEnvironment {
 	// pulls an image, creates a container based on it and runs it
 	resource, err := pool.BuildAndRunWithOptions("./testenv/Dockerfile", &dockertest.RunOptions{Name: "rabbitmq-test", Hostname: "localtest"})
 	if err != nil {
-		log.Fatalf("Could not start resource: %s", err)
+		t.Fatalf("Could not start resource: %s", err)
 	}
-	resource.Expire(120)
+	if err := resource.Expire(120); err != nil {
+		t.Fatalf("Could not set container expiration: %s", err)
+	}
+
 	tenv.resource = resource
 
 	checkManagementWebsite := func() error {

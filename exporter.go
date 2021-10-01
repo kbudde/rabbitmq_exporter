@@ -41,7 +41,6 @@ type exporter struct {
 	endpointScrapeDurationMetric *prometheus.GaugeVec
 	exporter                     map[string]Exporter
 	overviewExporter             *exporterOverview
-	self                         string
 	lastScrapeOK                 bool
 }
 

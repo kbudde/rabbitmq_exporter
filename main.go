@@ -17,7 +17,6 @@ import (
 
 const (
 	defaultLogLevel = log.InfoLevel
-	serviceName     = "RabbitMQ_exporter"
 )
 
 func initLogger() {
@@ -85,7 +84,7 @@ func main() {
 	handler := http.NewServeMux()
 	handler.Handle("/metrics", promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{}))
 	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`<html>
+		_, _ = w.Write([]byte(`<html>
              <head><title>RabbitMQ Exporter</title></head>
              <body>
              <h1>RabbitMQ Exporter</h1>

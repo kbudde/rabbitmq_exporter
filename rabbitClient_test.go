@@ -160,5 +160,7 @@ func assertNoSortRespected(t *testing.T, enabled bool) {
 		RabbitCapabilities: rabbitCapabilitySet{rabbitCapNoSort: enabled},
 	}
 
-	getMetricMap(*config, "overview")
+	if _, err := getMetricMap(*config, "overview"); err != nil {
+		t.Errorf("Error getting overview: %v", err)
+	}
 }
