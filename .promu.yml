@@ -1,5 +1,5 @@
 go: 
-    version: "1.15"
+    version: "1.17"
 verbose: true
 repository:
     path: github.com/kbudde/rabbitmq_exporter
