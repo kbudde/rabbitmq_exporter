@@ -48,7 +48,8 @@ func (rep *rabbitBERTReply) MakeMap() MetricMap {
 	flMap := make(MetricMap)
 	term := rep.objects
 
-	parseProplist(&flMap, "", term)
+	err := parseProplist(&flMap, "", term)
+	log.WithField("error", err).Warn("Error parsing rabbitmq reply (bert, MakeMap)")
 	return flMap
 }
 
@@ -166,7 +167,8 @@ func parseProplist(toMap *MetricMap, basename string, maybeProplist interface{})
 			(*toMap)[prefix+key+"_len"] = arraySize
 		}
 
-		parseProplist(toMap, prefix+key, value) // This can fail, but we don't care
+		err := parseProplist(toMap, prefix+key, value) // This can fail, but we don't care
+		log.WithField("error", err).Debug("Error parsing rabbitmq reply (bert, parseProplist)")
 		return true
 	})
 }
@@ -197,7 +199,7 @@ func assertBertKeyedTuple(maybeTuple interface{}) (string, bert.Term, bool) {
 	if !ok {
 		return "", nil, false
 	}
-	return key, tuple[1].(bert.Term), true
+	return key, tuple[1], true
 }
 
 func assertBertAtom(val interface{}) (string, bool) {
@@ -322,7 +324,7 @@ func (rep *rabbitBERTReply) GetString(label string) (string, bool) {
 	var result bool
 	result = false
 
-	iterateBertKV(rep.objects, func(key string, value interface{}) bool {
+	err := iterateBertKV(rep.objects, func(key string, value interface{}) bool {
 		//Check if current key should be saved as label
 
 		if key == label {
@@ -336,5 +338,6 @@ func (rep *rabbitBERTReply) GetString(label string) (string, bool) {
 		}
 		return true
 	})
+	log.WithField("error", err).Warn("Error parsing rabbitmq reply (bert, GetString)")
 	return resValue, result
 }
