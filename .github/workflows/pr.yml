@@ -12,7 +12,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v3
       with:
-        go-version: 8.x
+        go-version-file: 'go.mod'
     - name: Check out code into the Go module directory
       uses: actions/checkout@v3
     - name: run tests
