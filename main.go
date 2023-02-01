@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
-	"flag"
+
 	"net/http"
 	"os"
 	"strings"
@@ -12,7 +12,13 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/common/promlog"
+	"github.com/prometheus/common/promlog/flag"
+	"github.com/prometheus/common/version"
+	"github.com/prometheus/exporter-toolkit/web"
+	"github.com/prometheus/exporter-toolkit/web/kingpinflag"
 	log "github.com/sirupsen/logrus"
+	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
 const (
@@ -30,9 +36,15 @@ func initLogger() {
 }
 
 func main() {
-	var checkURL = flag.String("check-url", "", "Curl url and return exit code (http: 200 => 0, otherwise 1)")
-	var configFile = flag.String("config-file", "conf/rabbitmq.conf", "path to json config")
-	flag.Parse()
+	var checkURL = kingpin.Flag(
+		"check-url",
+		"Curl url and return exit code (http: 200 => 0, otherwise 1)",
+	).Default("").String()
+	var configFile = kingpin.Flag(
+		"config-file",
+		"path to json config",
+	).Default("conf/rabbitmq.conf").String()
+	var toolkitFlags = kingpinflag.AddFlags(kingpin.CommandLine, ":9419")
 
 	if *checkURL != "" { // do a single http get request. Used in docker healthckecks as curl is not inside the image
 		curl(*checkURL)
@@ -84,9 +96,17 @@ func main() {
 		//		"RABBIT_PASSWORD": config.RABBIT_PASSWORD,
 	}).Info("Active Configuration")
 
-	handler := http.NewServeMux()
-	handler.Handle("/metrics", promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{}))
-	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	promlogConfig := &promlog.Config{}
+	flag.AddFlags(kingpin.CommandLine, promlogConfig)
+	kingpin.Version(version.Print("rabbitmq_exporter"))
+	kingpin.CommandLine.UsageWriter(os.Stdout)
+	kingpin.HelpFlag.Short('h')
+	kingpin.Parse()
+	logger := promlog.New(promlogConfig)
+
+	//handler := http.NewServeMux()
+	http.Handle("/metrics", promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{}))
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(`<html>
              <head><title>RabbitMQ Exporter</title></head>
              <body>
@@ -95,7 +115,7 @@ func main() {
              </body>
              </html>`))
 	})
-	handler.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		if exporter.LastScrapeOK() {
 			w.WriteHeader(http.StatusOK)
 		} else {
@@ -103,13 +123,10 @@ func main() {
 		}
 	})
 
-	server := &http.Server{Addr: config.PublishAddr + ":" + config.PublishPort, Handler: handler}
-
-	go func() {
-		if err := server.ListenAndServe(); err != nil {
-			log.Fatal(err)
-		}
-	}()
+	server := &http.Server{}
+	if err := web.ListenAndServe(server, toolkitFlags, logger); err != nil {
+		log.Fatal(err)
+	}
 
 	<-runService()
 	log.Info("Shutting down")

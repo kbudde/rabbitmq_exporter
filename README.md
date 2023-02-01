@@ -298,3 +298,13 @@ If you are running older than 3.6.8 you have to set RABBIT_CAPABILITIES=compat.
 If there is a load balancer between the exporter and the RabbitMQApi, the setting `RABBIT_CONNECTION=loadbalancer` must be activated. 
 See https://github.com/kbudde/rabbitmq_exporter/issues/131 for details.
 
+## TLS endpoint
+
+
+The exporter supports TLS via a new web configuration file.
+
+```console
+./node_exporter --web.config.file=web-config.yml
+```
+
+See the [exporter-toolkit https package](https://github.com/prometheus/exporter-toolkit/blob/v0.1.0/https/README.md) for more details.
