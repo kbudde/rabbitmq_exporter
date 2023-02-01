@@ -12,7 +12,6 @@ require (
 	github.com/tkanos/gonfig v0.0.0-20210106201359-53e13348de2f
 	golang.org/x/sys v0.7.0
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
-
 )
 
 require (
@@ -60,6 +59,13 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	golang.org/x/net v0.7.0 // indirect
+	golang.org/x/crypto v0.0.0-20221012134737-56aed061732a // indirect
+	golang.org/x/net v0.0.0-20220909164309-bea034e7d591 // indirect
+	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
+	golang.org/x/sync v0.1.0 // indirect
+	golang.org/x/text v0.3.7 // indirect
+	google.golang.org/appengine v1.6.7 // indirect
+	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
