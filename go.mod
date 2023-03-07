@@ -10,9 +10,13 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/streadway/amqp v1.0.0
 	github.com/tkanos/gonfig v0.0.0-20210106201359-53e13348de2f
+<<<<<<< HEAD
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	golang.org/x/sys v0.7.0
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
+=======
+	golang.org/x/sys v0.5.0
+>>>>>>> f057c15 (Bump golang.org/x/net from 0.0.0-20220225172249-27dd8689420f to 0.7.0)
 )
 
 require (
