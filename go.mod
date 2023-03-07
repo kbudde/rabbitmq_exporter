@@ -12,6 +12,7 @@ require (
 	github.com/tkanos/gonfig v0.0.0-20210106201359-53e13348de2f
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	golang.org/x/sys v0.7.0
+
 )
 
 require (
