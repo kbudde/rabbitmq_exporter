@@ -98,6 +98,7 @@ func (e *exporterOverview) Collect(ctx context.Context, ch chan<- prometheus.Met
 	for key, gauge := range e.overviewMetrics {
 		if value, ok := rabbitMqOverviewData[key]; ok {
 			log.WithFields(log.Fields{"key": key, "value": value}).Debug("Set overview metric for key")
+			gauge.Reset()
 			gauge.WithLabelValues(e.nodeInfo.ClusterName).Set(value)
 		}
 	}
