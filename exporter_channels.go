@@ -62,5 +62,5 @@ func (e exporterChannels) Collect(ctx context.Context, ch chan<- prometheus.Metr
 }
 
 func (e exporterChannels) Describe(ch chan<- *prometheus.Desc) {
-	// not implemented given that currently this exporter only exposes channel state metric
+	e.stateMetric.Describe(ch)
 }
