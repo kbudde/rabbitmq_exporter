@@ -22,6 +22,7 @@ const (
 	connectionAPIResponse = `[{"auth_mechanism": "PLAIN","channel_max": 65535,"channels": 1,"client_properties": {"copyright": "Copyright (c) 2007-2014 VMWare Inc, Tony Garnock-Jones, and Alan Antonuk.","information": "See https://github.com/alanxz/rabbitmq-c","platform": "linux-gn","product": "rabbitmq-c","version": "0.5.3-pre"},"connected_at": 1501868641834,"frame_max": 131072,"garbage_collection": {"fullsweep_after": 65535,"min_bin_vheap_size": 46422,"min_heap_size": 233,"minor_gcs": 3},"host": "172.31.15.10","name": "172.31.0.130:32769 -> 172.31.15.10:5672","node": "my-rabbit@ae74c041248b","peer_cert_issuer": null,"peer_cert_subject": null,"peer_cert_validity": null,"peer_host": "172.31.0.130","peer_port": 32769,"port": 5672,"protocol": "AMQP 0-9-1","recv_cnt": 22708,"recv_oct": 8905713,"recv_oct_details": {"rate": 169.6},"reductions": 6257210,"reductions_details": {"rate": 148.8},"send_cnt": 6,"send_oct": 573,"send_oct_details": {"rate": 0.0},"send_pend": 0,"ssl": false,"ssl_cipher": null,"ssl_hash": null,"ssl_key_exchange": null,"ssl_protocol": null,"state": "running","timeout": 0,"type": "network","user": "rmq_oms","vhost": "/"},{"auth_mechanism": "PLAIN","channel_max": 65535,"channels": 1,"client_properties": {"copyright": "Copyright (c) 2007-2014 VMWare Inc, Tony Garnock-Jones, and Alan Antonuk.","information": "See https://github.com/alanxz/rabbitmq-c","platform": "linux-gn","product": "rabbitmq-c","version": "0.5.3-pre"},"connected_at": 1501868641834,"frame_max": 131072,"garbage_collection": {"fullsweep_after": 65535,"min_bin_vheap_size": 46422,"min_heap_size": 233,"minor_gcs": 3},"host": "172.31.15.10","name": "172.31.0.130:32769 -> 172.31.15.10:5672","node": "rabbit@rmq-cluster-node-04","peer_cert_issuer": null,"peer_cert_subject": null,"peer_cert_validity": null,"peer_host": "172.31.0.130","peer_port": 32769,"port": 5672,"protocol": "AMQP 0-9-1","recv_cnt": 22708,"recv_oct": 8905713,"recv_oct_details": {"rate": 169.6},"reductions": 6257210,"reductions_details": {"rate": 148.8},"send_cnt": 6,"send_oct": 573,"send_oct_details": {"rate": 0.0},"send_pend": 0,"ssl": false,"ssl_cipher": null,"ssl_hash": null,"ssl_key_exchange": null,"ssl_protocol": null,"state": "running","timeout": 0,"type": "network","user": "rmq_oms","vhost": "/"}]`
 	shovelAPIResponse     = `[{"node":"my-rabbit@4a6df52ebc2a","timestamp":"2019-04-23 10:32:08","name":"test-shovel","vhost":"/","type":"dynamic","state":"terminated","reason":"{failed_to_connect_using_provided_uris,\n [{rabbit_amqp091_shovel,make_conn_and_chan,2,\n [{file,\"src/rabbit_amqp091_shovel.erl\"},{line,324}]},\n {rabbit_amqp091_shovel,connect_source,1,\n [{file,\"src/rabbit_amqp091_shovel.erl\"},{line,78}]},\n {rabbit_shovel_worker,handle_cast,2,\n [{file,\"src/rabbit_shovel_worker.erl\"},{line,64}]},\n {gen_server2,handle_msg,2,[{file,\"src/gen_server2.erl\"},{line,1056}]},\n {proc_lib,init_p_do_apply,3,[{file,\"proc_lib.erl\"},{line,249}]}]}"},{"node":"my-rabbit@ae74c041248b","timestamp":"2019-04-17 1:01:11","name":"ADMIN-3779-1","vhost":"/","type":"dynamic","state":"running","src_uri":"amqp://","src_protocol":"amqp091","dest_protocol":"amqp091","dest_uri":"amqps://rabbitmq.example.com:5671/dev-1","src_exchange":"test.exchange","src_exchange_key":"EVENT_SNAPSHOT.#","dest_exchange":"test.event.snapshot.v1"}]`
 	federationAPIResponse = `[{"node":"my-rabbit@ae74c041248b","queue":"test_queue1","upstream_queue":"test_queue1","type":"queue","vhost":"/","upstream":"root","id":"d4b0c59f","status":"running","local_connection":"<rabbit@4a6df52ebc2a.3.25296.0>","uri":"amqp://192.168.34.2","timestamp":"2019-08-20 10:19:19","local_channel":{"acks_uncommitted":0,"confirm":true,"connection_details":{"name":"<rabbit@4a6df52ebc2a.3.25296.0>","peer_host":"undefined","peer_port":"undefined"},"consumer_count":0,"garbage_collection":{"fullsweep_after":65535,"max_heap_size":0,"min_bin_vheap_size":46422,"min_heap_size":233,"minor_gcs":0},"global_prefetch_count":0,"idle_since":"2019-08-20 10:19:20","messages_unacknowledged":0,"messages_uncommitted":0,"messages_unconfirmed":0,"name":"<rabbit@4a6df52ebc2a.3.25296.0> (1)","node":"my-rabbit@ae74c041248b","number":1,"prefetch_count":0,"reductions":1140,"reductions_details":{"rate":0.0},"state":"running","transactional":false,"user":"none","user_who_performed_action":"none","vhost":"/"}},{"node":"rabbit@dc1rbmq1","queue":"test_queue2","upstream_queue":"test_queue2","type":"queue","vhost":"/","upstream":"root","id":"1a398d90","status":"starting","uri":"amqp://192.168.34.2","timestamp":"2019-08-21 10:09:43"},{"node":"rabbit@dc1rbmq1","exchange":"test_exchange1","upstream_exchange":"test_exchange1","type":"exchange","vhost":"/","upstream":"root","id":"8b3dd12a","status":"running","local_connection":"<rabbit@dc1rbmq1.3.5088.1>","uri":"amqp://192.168.34.2","timestamp":"2019-08-21 10:31:47","local_channel":{"acks_uncommitted":0,"confirm":true,"connection_details":{"name":"<rabbit@dc1rbmq1.3.5088.1>","peer_host":"undefined","peer_port":"undefined"},"consumer_count":0,"garbage_collection":{"fullsweep_after":65535,"max_heap_size":0,"min_bin_vheap_size":46422,"min_heap_size":233,"minor_gcs":0},"global_prefetch_count":0,"idle_since":"2019-08-21 10:31:17","messages_unacknowledged":0,"messages_uncommitted":0,"messages_unconfirmed":0,"name":"<rabbit@dc1rbmq1.3.5088.1> (1)","node":"rabbit@dc1rbmq1","number":1,"prefetch_count":0,"reductions":1136,"reductions_details":{"rate":0.0},"state":"running","transactional":false,"user":"none","user_who_performed_action":"none","vhost":"/"}}]`
+	channelsAPIResponse   = `[{"acks_uncommitted":0,"confirm":false,"connection_details":{"name":"10.0.51.245:52958 -> 10.0.94.189:5672","peer_host":"10.0.51.245","peer_port":52958},"consumer_count":1,"garbage_collection":{"fullsweep_after":65535,"max_heap_size":0,"min_bin_vheap_size":46422,"min_heap_size":233,"minor_gcs":4},"global_prefetch_count":0,"message_stats":{"ack":6184200,"ack_details":{"rate":300.0},"deliver":6184200,"deliver_details":{"rate":299.8},"deliver_get":6184200,"deliver_get_details":{"rate":299.8},"deliver_no_ack":0,"deliver_no_ack_details":{"rate":0.0},"get":0,"get_details":{"rate":0.0},"get_empty":0,"get_empty_details":{"rate":0.0},"get_no_ack":0,"get_no_ack_details":{"rate":0.0},"redeliver":0,"redeliver_details":{"rate":0.0}},"messages_unacknowledged":0,"messages_uncommitted":0,"messages_unconfirmed":0,"name":"10.0.51.245:52958 -> 10.0.94.189:5672 (1)","node":"my-rabbit@ae74c041248b","number":1,"pending_raft_commands":0,"prefetch_count":250,"reductions":1094124873,"reductions_details":{"rate":156270.6},"state":"running","transactional":false,"user":"testuser","user_who_performed_action":"testuser","vhost":"/"}]`
 )
 
 func expectSubstring(t *testing.T, body string, substr string) {
@@ -246,7 +247,7 @@ func TestRabbitError(t *testing.T) {
 	}
 }
 
-//TestResetMetricsOnRabbitFailure verifies the behaviour of the exporter if the rabbitmq fails after one successfull retrieval of the data
+// TestResetMetricsOnRabbitFailure verifies the behaviour of the exporter if the rabbitmq fails after one successfull retrieval of the data
 // List of metrics should be empty except rabbitmq_up{cluster="my-rabbit@ae74c041248b",node="my-rabbit@ae74c041248b"} should be 0
 func TestResetMetricsOnRabbitFailure(t *testing.T) {
 	rabbitUP := true
@@ -427,7 +428,7 @@ func TestResetMetricsOnRabbitFailure(t *testing.T) {
 	t.Run("RabbitMQ is using loadbalancer -> self is always 1", func(t *testing.T) {
 		rabbitUP = true
 		rabbitQueuesUp = true
-        config.RabbitConnection = "loadbalancer"
+		config.RabbitConnection = "loadbalancer"
 		req, _ := http.NewRequest("GET", "", nil)
 		w := httptest.NewRecorder()
 		promhttp.Handler().ServeHTTP(w, req)
@@ -837,4 +838,88 @@ func TestFederation(t *testing.T) {
 
 	})
 
+}
+
+func TestChannels(t *testing.T) {
+	rabbitUP := true
+	channelUP := true
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !rabbitUP {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintln(w, http.StatusText(http.StatusInternalServerError))
+			return
+		}
+		if !channelUP && r.RequestURI == "/api/channels" {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintln(w, http.StatusText(http.StatusInternalServerError))
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		if r.RequestURI == "/api/overview" {
+			fmt.Fprintln(w, overviewTestData)
+		} else if r.RequestURI == "/api/queues" {
+			fmt.Fprintln(w, queuesTestData)
+		} else if r.RequestURI == "/api/exchanges" {
+			fmt.Fprintln(w, exchangeAPIResponse)
+		} else if r.RequestURI == "/api/nodes" {
+			fmt.Fprintln(w, nodesAPIResponse)
+		} else if r.RequestURI == "/api/connections" {
+			fmt.Fprintln(w, connectionAPIResponse)
+		} else if r.RequestURI == "/api/federation-links" {
+			fmt.Fprintln(w, federationAPIResponse)
+		} else if r.RequestURI == "/api/channels" {
+			fmt.Fprintln(w, channelsAPIResponse)
+		} else {
+			t.Errorf("Invalid request. URI=%v", r.RequestURI)
+			fmt.Fprintf(w, "Invalid request. URI=%v", r.RequestURI)
+		}
+
+	}))
+	defer server.Close()
+	os.Setenv("RABBIT_URL", server.URL)
+	os.Setenv("RABBIT_CAPABILITIES", " ")
+	defer os.Unsetenv("RABBIT_CAPABILITIES")
+	os.Setenv("RABBIT_EXPORTERS", "channels")
+	defer os.Unsetenv("RABBIT_EXPORTERS")
+
+	initConfig()
+
+	exporter := newExporter()
+	prometheus.MustRegister(exporter)
+	defer prometheus.Unregister(exporter)
+
+	reg := regexp.MustCompile(`(.*channel.* \d+)`)
+
+	t.Run("RabbitMQ is up -> all metrics are ok", func(t *testing.T) {
+		rabbitUP = true
+		channelUP = true
+		req, _ := http.NewRequest("GET", "", nil)
+		w := httptest.NewRecorder()
+		promhttp.Handler().ServeHTTP(w, req)
+		if w.Code != http.StatusOK {
+			t.Errorf("Home page didn't return %v", http.StatusOK)
+		}
+		body := w.Body.String()
+
+		t.Log(strings.Join(reg.FindAllString(body, -1), "\n"))
+
+		expectSubstring(t, body, `rabbitmq_module_up{cluster="my-rabbit@ae74c041248b",module="channels",node="my-rabbit@ae74c041248b"} 1`)
+		expectSubstring(t, body, `rabbitmq_channel_status{cluster="my-rabbit@ae74c041248b",confirm="false",name="10.0.51.245:52958 -> 10.0.94.189:5672 (1)",node="my-rabbit@ae74c041248b",self="1",state="running",transactional="false",user="testuser",vhost="/"} 1`)
+	})
+
+	t.Run("channel endpoint down", func(t *testing.T) {
+		channelUP = false
+		req, _ := http.NewRequest("GET", "", nil)
+		w := httptest.NewRecorder()
+		promhttp.Handler().ServeHTTP(w, req)
+		if w.Code != http.StatusOK {
+			t.Errorf("Home page didn't return %v", http.StatusOK)
+		}
+		body := w.Body.String()
+		t.Log(strings.Join(reg.FindAllString(body, -1), "\n"))
+
+		expectSubstring(t, body, `rabbitmq_module_up{cluster="my-rabbit@ae74c041248b",module="channels",node="my-rabbit@ae74c041248b"} 0`)
+		dontExpectSubstring(t, body, `rabbitmq_channel_status{cluster="my-rabbit@ae74c041248b",confirm="false",name="10.0.51.245:52958 -> 10.0.94.189:5672 (1)",node="my-rabbit@ae74c041248b",self="1",state="running",transactional="false",user="testuser",vhost="/"} 1`)
+	})
 }
