@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -8,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/hashicorp/vault-client-go"
+	"github.com/hashicorp/vault-client-go/schema"
 	"github.com/tkanos/gonfig"
 )
 
@@ -37,6 +40,13 @@ var (
 		EnabledExporters:   []string{"exchange", "node", "overview", "queue"},
 		Timeout:            30,
 		MaxQueues:          0,
+		UseVault:           false,
+		VaultAddress:       "http://127.0.0.1:8200",
+		VaultRoleID:        "test",
+		VaultSecretID:      "test",
+		VaultSecretPath:    "deployments/unit/dev/user/passwords_yml",
+		VaultSecretMountPath: "secret_v2",
+		CredentialNameInVaultSecret: "rabbitmq_monitoring_password",
 	}
 )
 
@@ -71,6 +81,13 @@ type rabbitExporterConfig struct {
 	EnabledExporters         []string            `json:"enabled_exporters"`
 	Timeout                  int                 `json:"timeout"`
 	MaxQueues                int                 `json:"max_queues"`
+	UseVault                 bool                `json:"use_vault"`
+	VaultAddress             string              `json:"vault_address"`
+	VaultRoleID              string              `json:"vault_role_id"`
+	VaultSecretID            string              `json:"vault_secret_id"`
+	VaultSecretPath          string              `json:"vault_secret_path"`
+	VaultSecretMountPath     string              `json:"vault_secret_mount_path"`
+	CredentialNameInVaultSecret string           `json:"credential_name_in_vault_secret"`
 }
 
 type rabbitCapability string
@@ -106,6 +123,9 @@ func initConfigFromFile(configFile string) error {
 	config.SkipVHost = regexp.MustCompile(config.SkipVHostString)
 	config.IncludeVHost = regexp.MustCompile(config.IncludeVHostString)
 	config.RabbitCapabilities = parseCapabilities(config.RabbitCapabilitiesString)
+
+	SetPasswordIfVaultIsUsed()
+
 	return nil
 }
 
@@ -270,4 +290,38 @@ func selfLabel(config rabbitExporterConfig, isSelf bool) string {
 	} else {
 		return "0"
 	}
+}
+
+func SetPasswordIfVaultIsUsed() {
+	if !config.UseVault {
+		return
+	}
+	client, err := vault.New(vault.WithAddress(config.VaultAddress),)
+	if err != nil {
+		panic(fmt.Errorf("failed to create vault client: %v", err))
+	}
+	ctx := context.Background()
+	resp, err := client.Auth.AppRoleLogin(
+		ctx,
+		schema.AppRoleLoginRequest{
+			RoleId:   config.VaultRoleID,
+			SecretId: config.VaultSecretID,
+		},
+	)
+	if err != nil {
+		panic(fmt.Errorf("failed to login to vault: %v", err))
+	}
+	if err := client.SetToken(resp.Auth.ClientToken); err != nil {
+		panic(fmt.Errorf("failed to set vault token: %v", err))
+	}
+	data, err := client.Secrets.KvV2Read(
+		ctx,
+		config.VaultSecretPath,
+		vault.WithMountPath(config.VaultSecretMountPath),
+	)
+	if err != nil {
+		panic(fmt.Errorf("failed to get Vault secret: %v", err))
+	}
+
+	config.RabbitPassword = data.Data.Data[config.CredentialNameInVaultSecret].(string)
 }
