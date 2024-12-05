@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 )
 
 type rabbitJSONReply struct {
@@ -25,12 +25,13 @@ func (rep *rabbitJSONReply) MakeStatsInfo(labels []string) []StatsInfo {
 	var jsonArr []map[string]interface{}
 	decoder := json.NewDecoder(bytes.NewBuffer(rep.body))
 	if decoder == nil {
-		log.Error("JSON decoder not iniatilized")
+		slog.Error("JSON decoder not iniatilized")
 		return make([]StatsInfo, 0)
 	}
 
 	if err := decoder.Decode(&jsonArr); err != nil {
-		log.WithField("error", err).Error("Error while decoding json")
+		slog.Error("Error while decoding json")
+		slog.Any("error", err)
 		return make([]StatsInfo, 0)
 	}
 
@@ -43,7 +44,7 @@ func (rep *rabbitJSONReply) MakeStatsInfo(labels []string) []StatsInfo {
 			field = "id"
 		}
 		if field != "" {
-			log.WithFields(log.Fields{"element": el, "vhost": el["vhost"], field: el[field]}).Debug("Iterate over array")
+			slog.Debug("Iterate over array", "element", el, "vhost", el["vhost"], field, el[field])
 			statsinfo := StatsInfo{}
 			statsinfo.labels = make(map[string]string)
 
@@ -73,12 +74,12 @@ func (rep *rabbitJSONReply) MakeMap() MetricMap {
 	var output map[string]interface{}
 	decoder := json.NewDecoder(bytes.NewBuffer(rep.body))
 	if decoder == nil {
-		log.Error("JSON decoder not iniatilized")
+		slog.Error("JSON decoder not iniatilized")
 		return flMap
 	}
 
 	if err := decoder.Decode(&output); err != nil {
-		log.WithField("error", err).Error("Error while decoding json")
+		slog.Error("Error while decoding json", "error", err)
 		return flMap
 	}
 
@@ -115,7 +116,7 @@ func (rep *rabbitJSONReply) GetString(key string) (string, bool) {
 		keys := make(map[string]interface{})
 		decoder := json.NewDecoder(bytes.NewBuffer(rep.body))
 		if decoder == nil {
-			log.Error("JSON decoder not iniatilized")
+			slog.Error("JSON decoder not iniatilized")
 			return "", false
 		}
 		err := decoder.Decode(&keys)

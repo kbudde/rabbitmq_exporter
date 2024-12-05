@@ -1,7 +1,7 @@
 package main
 
 import (
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 	"golang.org/x/sys/windows/svc"
 )
 
@@ -11,7 +11,8 @@ func runService() chan bool {
 	stopCh := make(chan bool)
 	isInteractive, err := svc.IsAnInteractiveSession()
 	if err != nil {
-		log.Fatal(err)
+		slog.Any("error", err)
+		panic(err)
 	}
 	if !isInteractive {
 		go svc.Run(serviceName, &rmqExporterService{stopCh: stopCh})
@@ -38,7 +39,7 @@ loop:
 				s.stopCh <- true
 				break loop
 			default:
-				log.Error("unexpected control request ", c)
+				slog.Error("unexpected control request ", c)
 			}
 		}
 		changes <- svc.Status{State: svc.StopPending}

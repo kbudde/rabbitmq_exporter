@@ -5,7 +5,7 @@ import (
 	"math/big"
 
 	bert "github.com/kbudde/gobert"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 )
 
 // rabbitBERTReply (along with its RabbitReply interface
@@ -26,7 +26,7 @@ func (rep *rabbitBERTReply) MakeStatsInfo(labels []string) []StatsInfo {
 
 	objects, ok := rawObjects.([]bert.Term)
 	if !ok {
-		log.WithField("got", rawObjects).Error("Statistics reply should contain a slice of objects")
+		slog.Error("Statistics reply should contain a slice of objects", "got", rawObjects)
 		return make([]StatsInfo, 0)
 	}
 
@@ -35,7 +35,7 @@ func (rep *rabbitBERTReply) MakeStatsInfo(labels []string) []StatsInfo {
 	for _, v := range objects {
 		obj, ok := parseSingleStatsObject(v, labels)
 		if !ok {
-			log.WithField("got", v).Error("Ignoring unparseable stats object")
+			slog.Error("Ignoring unparseable stats object", "got", v)
 			continue
 		}
 		statistics = append(statistics, *obj)
@@ -50,7 +50,7 @@ func (rep *rabbitBERTReply) MakeMap() MetricMap {
 
 	err := parseProplist(&flMap, "", term)
 	if err != nil {
-		log.WithField("error", err).Warn("Error parsing rabbitmq reply (bert, MakeMap)")
+		slog.Warn("Error parsing rabbitmq reply (bert, MakeMap)", "error", err)
 	}
 	return flMap
 }
@@ -116,7 +116,7 @@ func parseSingleStatsObject(obj interface{}, labels []string) (*StatsInfo, bool)
 			if key == label {
 				tmp, ok := parseBertStringy(value)
 				if !ok {
-					log.WithField("got", value).WithField("label", label).Error("Non-string field")
+					slog.Error("Non-string field", "got", value, "label", label)
 					objectOk = false
 					return false
 				}
@@ -170,7 +170,7 @@ func parseProplist(toMap *MetricMap, basename string, maybeProplist interface{})
 		}
 
 		err := parseProplist(toMap, prefix+key, value) // This can fail, but we don't care
-		log.WithField("error", err).Debug("Error parsing rabbitmq reply (bert, parseProplist)")
+		slog.Debug("Error parsing rabbitmq reply (bert, parseProplist)", "error", err)
 		return true
 	})
 }
@@ -341,7 +341,7 @@ func (rep *rabbitBERTReply) GetString(label string) (string, bool) {
 		return true
 	})
 	if err != nil {
-		log.WithField("error", err).Warn("Error parsing rabbitmq reply (bert, GetString)")
+		slog.Warn("Error parsing rabbitmq reply (bert, GetString)", "error", err)
 	}
 	return resValue, result
 }

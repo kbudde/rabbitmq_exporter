@@ -4,13 +4,13 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"time"
 
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 )
 
 var client = &http.Client{Timeout: 15 * time.Second} //default client for test. Client is initialized in initClient()
@@ -18,17 +18,18 @@ var client = &http.Client{Timeout: 15 * time.Second} //default client for test. 
 func initClient() {
 	var roots *x509.CertPool
 
-	if data, err := ioutil.ReadFile(config.CAFile); err == nil {
+	if data, err := os.ReadFile(config.CAFile); err == nil {
 		roots = x509.NewCertPool()
 		if !roots.AppendCertsFromPEM(data) {
-			log.WithField("filename", config.CAFile).Error("Adding certificate to rootCAs failed")
+			slog.Error("Adding certificate to rootCAs failed", "filename", config.CAFile)
 		}
 	} else {
 		var err error
-		log.Info("Using default certificate pool")
+		slog.Info("Using default certificate pool")
 		roots, err = x509.SystemCertPool()
 		if err != nil {
-			log.WithError(err).Error("retriving system cert pool failed")
+			slog.Error("retriving system cert pool failed")
+			slog.Any("error", err)
 		}
 
 	}
@@ -43,14 +44,15 @@ func initClient() {
 	_, errCertFile := os.Stat(config.CertFile)
 	_, errKeyFile := os.Stat(config.KeyFile)
 	if errCertFile == nil && errKeyFile == nil {
-		log.Info("Using client certificate: " + config.CertFile + " and key: " + config.KeyFile)
+		slog.Info("Using client certificate: " + config.CertFile + " and key: " + config.KeyFile)
 		if cert, err := tls.LoadX509KeyPair(config.CertFile, config.KeyFile); err == nil {
 			tr.TLSClientConfig.ClientAuth = tls.RequireAndVerifyClientCert
 			tr.TLSClientConfig.Certificates = []tls.Certificate{cert}
 		} else {
-			log.WithField("certFile", config.CertFile).
-				WithField("keyFile", config.KeyFile).
-				Error("Loading client certificate and key failed: ", err)
+			slog.Error("Loading client certificate and key failed.", 
+			           "error", err, 
+					   "certFile", config.CertFile,
+					   "keyFile", config.KeyFile)
 		}
 	}
 
@@ -75,7 +77,7 @@ func apiRequest(config rabbitExporterConfig, endpoint string) ([]byte, string, e
 
 	req, err := http.NewRequest("GET", config.RabbitURL+"/api/"+endpoint+args, nil)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "host": config.RabbitURL}).Error("Error while constructing rabbitHost request")
+		slog.Error("Error while constructing rabbitHost request", "error", err, "host", config.RabbitURL)
 		return nil, "", errors.New("Error while constructing rabbitHost request")
 	}
 
@@ -89,17 +91,17 @@ func apiRequest(config rabbitExporterConfig, endpoint string) ([]byte, string, e
 		if resp != nil {
 			status = resp.StatusCode
 		}
-		log.WithFields(log.Fields{"error": err, "host": config.RabbitURL, "statusCode": status}).Error("Error while retrieving data from rabbitHost")
+		slog.Error("Error while retrieving data from rabbitHost", "error", err, "host", config.RabbitURL, "statusCode", status)
 		return nil, "", errors.New("Error while retrieving data from rabbitHost")
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	resp.Body.Close()
 	content := resp.Header.Get("Content-type")
 	if err != nil {
 		return nil, "", err
 	}
-	log.WithFields(log.Fields{"body": string(body), "endpoint": endpoint}).Debug("Metrics loaded")
+	slog.Debug("Metrics loaded", "body", string(body), "endpoint", endpoint)
 
 	return body, content, nil
 }

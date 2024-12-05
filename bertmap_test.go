@@ -1,7 +1,7 @@
 package main
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/kylelemons/godebug/pretty"
@@ -40,13 +40,13 @@ func TestMetricMapEquivalence(t *testing.T) {
 
 func tryReadFiles(t *testing.T, base, firstExt, secondExt string) ([]byte, []byte) {
 	firstFile := "testdata/" + base + "." + firstExt
-	first, err := ioutil.ReadFile(firstFile)
+	first, err := os.ReadFile(firstFile)
 	if err != nil {
 		t.Fatalf("Error reading %s", firstFile)
 	}
 
 	secondFile := "testdata/" + base + "." + secondExt
-	second, err := ioutil.ReadFile(secondFile)
+	second, err := os.ReadFile(secondFile)
 	if err != nil {
 		t.Fatalf("Error reading %s", secondFile)
 	}

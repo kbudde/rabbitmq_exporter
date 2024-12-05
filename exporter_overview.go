@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/prometheus/client_golang/prometheus"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 )
 
 func init() {
@@ -94,10 +94,10 @@ func (e *exporterOverview) Collect(ctx context.Context, ch chan<- prometheus.Met
 	rabbitmqVersionMetric.Reset()
 	rabbitmqVersionMetric.WithLabelValues(e.nodeInfo.RabbitmqVersion, e.nodeInfo.ErlangVersion, e.nodeInfo.Node, e.nodeInfo.ClusterName).Set(1)
 
-	log.WithField("overviewData", rabbitMqOverviewData).Debug("Overview data")
+	slog.Debug("Overview data", "overviewData", rabbitMqOverviewData)
 	for key, gauge := range e.overviewMetrics {
 		if value, ok := rabbitMqOverviewData[key]; ok {
-			log.WithFields(log.Fields{"key": key, "value": value}).Debug("Set overview metric for key")
+			slog.Debug("Set overview metric for key", "key", key, "value", value)
 			gauge.Reset()
 			gauge.WithLabelValues(e.nodeInfo.ClusterName).Set(value)
 		}

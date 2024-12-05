@@ -70,26 +70,6 @@ func TestEnvironmentSettingPasswordFile(t *testing.T) {
 	}
 }
 
-func TestEnvironmentSettingPort(t *testing.T) {
-	newValue := "9091"
-	os.Setenv("PUBLISH_PORT", newValue)
-	defer os.Unsetenv("PUBLISH_PORT")
-	initConfig()
-	if config.PublishPort != newValue {
-		t.Errorf("Expected config.PUBLISH_PORT to be modified. Found=%v, expected=%v", config.PublishPort, newValue)
-	}
-}
-
-func TestEnvironmentSettingAddr(t *testing.T) {
-	newValue := "localhost"
-	os.Setenv("PUBLISH_ADDR", newValue)
-	defer os.Unsetenv("PUBLISH_ADDR")
-	initConfig()
-	if config.PublishAddr != newValue {
-		t.Errorf("Expected config.PUBLISH_ADDR to be modified. Found=%v, expected=%v", config.PublishAddr, newValue)
-	}
-}
-
 func TestEnvironmentSettingFormat(t *testing.T) {
 	newValue := "json"
 	os.Setenv("OUTPUT_FORMAT", newValue)
@@ -97,31 +77,6 @@ func TestEnvironmentSettingFormat(t *testing.T) {
 	initConfig()
 	if config.OutputFormat != newValue {
 		t.Errorf("Expected config.OUTPUT_FORMAT to be modified. Found=%v, expected=%v", config.OutputFormat, newValue)
-	}
-}
-
-func TestConfig_Port(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("initConfig should panic on invalid port config")
-		}
-	}()
-	port := config.PublishPort
-	os.Setenv("PUBLISH_PORT", "noNumber")
-	defer os.Unsetenv("PUBLISH_PORT")
-	initConfig()
-	if config.PublishPort != port {
-		t.Errorf("Invalid Portnumber. It should not be set. expected=%v,got=%v", port, config.PublishPort)
-	}
-}
-
-func TestConfig_Addr(t *testing.T) {
-	addr := config.PublishAddr
-	os.Setenv("PUBLISH_ADDR", "")
-	defer os.Unsetenv("PUBLISH_ADDR")
-	initConfig()
-	if config.PublishAddr != addr {
-		t.Errorf("Invalid Addrress. It should not be set. expected=%v,got=%v", addr, config.PublishAddr)
 	}
 }
 

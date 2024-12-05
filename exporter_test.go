@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -88,8 +87,8 @@ func TestWholeApp(t *testing.T) {
 	body := w.Body.String()
 	t.Log(body)
 	lines := strings.Split(body, "\n")
-	if lc := len(lines); lc != 390 {
-		t.Errorf("expected 390 lines, got %d", lc)
+	if lc := len(lines); lc != 402 {
+		t.Errorf("expected 402 lines, got %d", lc)
 	}
 	expectSubstring(t, body, `rabbitmq_up{cluster="my-rabbit@ae74c041248b",node="my-rabbit@ae74c041248b"} 1`)
 
@@ -461,7 +460,7 @@ func TestExporter(t *testing.T) {
 				`rabbitmq_queue_messages_ready{cluster="my-rabbit@ae74c041248b",durable="true",policy="ha-2",queue="myQueue2",self="1",vhost="/"} 25`,
 			},
 			dontExpect: []string{},
-			lines:      419,
+			lines:      431,
 		},
 		{
 			name: "Include specific queue",
@@ -630,7 +629,7 @@ func TestQueueState(t *testing.T) {
 
 func TestQueueLength(t *testing.T) {
 	testdataFile := "testdata/queue-max-length.json"
-	queuedata, err := ioutil.ReadFile(testdataFile)
+	queuedata, err := os.ReadFile(testdataFile)
 	if err != nil {
 		t.Fatalf("Error reading %s", testdataFile)
 	}

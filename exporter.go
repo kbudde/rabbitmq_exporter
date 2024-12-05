@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 )
 
 var (
@@ -99,13 +99,15 @@ func (e *exporter) Collect(ch chan<- prometheus.Metric) {
 	allUp := true
 
 	if err := e.collectWithDuration(e.overviewExporter, "overview", ch); err != nil {
-		log.WithError(err).Warn("retrieving overview failed")
+		slog.Warn("retrieving overview failed")
+		slog.Any("error", err)
 		allUp = false
 	}
 
 	for name, ex := range e.exporter {
 		if err := e.collectWithDuration(ex, name, ch); err != nil {
-			log.WithError(err).Warn("retrieving " + name + " failed")
+			slog.Warn("retrieving " + name + " failed")
+			slog.Any("error", err)
 			allUp = false
 		}
 	}
@@ -125,7 +127,7 @@ func (e *exporter) Collect(ch chan<- prometheus.Metric) {
 	e.upMetric.Collect(ch)
 	e.endpointUpMetric.Collect(ch)
 	e.endpointScrapeDurationMetric.Collect(ch)
-	log.WithField("duration", time.Since(start)).Info("Metrics updated")
+	slog.Info("Metrics updated", "duration", time.Since(start))
 
 }
 

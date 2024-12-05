@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"strconv"
@@ -18,8 +17,6 @@ var (
 		RabbitUsername:     "guest",
 		RabbitPassword:     "guest",
 		RabbitConnection:   "direct",
-		PublishPort:        "9419",
-		PublishAddr:        "",
 		OutputFormat:       "TTY", //JSON
 		CAFile:             "ca.pem",
 		CertFile:           "client-cert.pem",
@@ -45,8 +42,6 @@ type rabbitExporterConfig struct {
 	RabbitUsername           string              `json:"rabbit_user"`
 	RabbitPassword           string              `json:"rabbit_pass"`
 	RabbitConnection         string              `json:"rabbit_connection"`
-	PublishPort              string              `json:"publish_port"`
-	PublishAddr              string              `json:"publish_addr"`
 	OutputFormat             string              `json:"output_format"`
 	CAFile                   string              `json:"ca_file"`
 	CertFile                 string              `json:"cert_file"`
@@ -131,7 +126,7 @@ func initConfig() {
 	var pass string
 
 	if len(os.Getenv("RABBIT_USER_FILE")) != 0 {
-		fileContents, err := ioutil.ReadFile(os.Getenv("RABBIT_USER_FILE"))
+		fileContents, err := os.ReadFile(os.Getenv("RABBIT_USER_FILE"))
 		if err != nil {
 			panic(err)
 		}
@@ -145,7 +140,7 @@ func initConfig() {
 	}
 
 	if len(os.Getenv("RABBIT_PASSWORD_FILE")) != 0 {
-		fileContents, err := ioutil.ReadFile(os.Getenv("RABBIT_PASSWORD_FILE"))
+		fileContents, err := os.ReadFile(os.Getenv("RABBIT_PASSWORD_FILE"))
 		if err != nil {
 			panic(err)
 		}
@@ -155,19 +150,6 @@ func initConfig() {
 	}
 	if pass != "" {
 		config.RabbitPassword = pass
-	}
-
-	if port := os.Getenv("PUBLISH_PORT"); port != "" {
-		if _, err := strconv.Atoi(port); err == nil {
-			config.PublishPort = port
-		} else {
-			panic(fmt.Errorf("the configured port is not a valid number: %v", port))
-		}
-
-	}
-
-	if addr := os.Getenv("PUBLISH_ADDR"); addr != "" {
-		config.PublishAddr = addr
 	}
 
 	if output := os.Getenv("OUTPUT_FORMAT"); output != "" {
