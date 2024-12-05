@@ -3,36 +3,46 @@ package main
 import (
 	"bytes"
 	"context"
-	"flag"
+	"log/slog"
 	"net/http"
 	"os"
 	"strings"
 	"time"
 
+	"github.com/alecthomas/kingpin/v2"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/prometheus/client_golang/prometheus"
-	log "github.com/sirupsen/logrus"
-)
 
-const (
-	defaultLogLevel = log.InfoLevel
+	"github.com/prometheus/exporter-toolkit/web"
+	webflag "github.com/prometheus/exporter-toolkit/web/kingpinflag"
+
 )
 
 func initLogger() {
-	log.SetLevel(getLogLevel())
+	logHandlerOptions := slog.HandlerOptions{}
+	envLogLevel := os.Getenv("LOG_LEVEL")
+	if envLogLevel != "" {
+		logLevel := slog.Level.Level(slog.LevelInfo)
+		error := logLevel.UnmarshalText([]byte(envLogLevel))
+		if error != nil {
+			slog.Error("Allowed case-independent log level values: debug, info, warn, error.", "LOG_LEVEL", envLogLevel)
+			panic(error)
+		}
+		logHandlerOptions = slog.HandlerOptions{Level: logLevel}
+	}
 	if strings.ToUpper(config.OutputFormat) == "JSON" {
-		log.SetFormatter(&log.JSONFormatter{})
+		slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &logHandlerOptions)))
 	} else {
-		// The TextFormatter is default, you don't actually have to do this.
-		log.SetFormatter(&log.TextFormatter{})
+		slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &logHandlerOptions)))
 	}
 }
 
 func main() {
-	var checkURL = flag.String("check-url", "", "Curl url and return exit code (http: 200 => 0, otherwise 1)")
-	var configFile = flag.String("config-file", "conf/rabbitmq.conf", "path to json config")
-	flag.Parse()
+	var checkURL = kingpin.Flag("check-url", "Curl url and return exit code (http: 200 => 0, otherwise 1)").Default("").String()
+	var configFile = kingpin.Flag("config-file", "path to json config").Default("conf/rabbitmq.conf").String()
+	webFlags := webflag.AddFlags(kingpin.CommandLine, ":9417")
+	kingpin.Parse()
 
 	if *checkURL != "" { // do a single http get request. Used in docker healthckecks as curl is not inside the image
 		curl(*checkURL)
@@ -51,42 +61,37 @@ func main() {
 	exporter := newExporter()
 	prometheus.MustRegister(exporter)
 
-	log.WithFields(log.Fields{
-		"VERSION":    Version,
-		"REVISION":   Revision,
-		"BRANCH":     Branch,
-		"BUILD_DATE": BuildDate,
-		//		"RABBIT_PASSWORD": config.RABBIT_PASSWORD,
-	}).Info("Starting RabbitMQ exporter")
+	slog.Info("Starting RabbitMQ exporter", 
+			  "VERSION",    Version, 
+			  "REVISION",   Revision, 
+			  "BRANCH",     Branch,
+			  "BUILD_DATE", BuildDate)
 
-	log.WithFields(log.Fields{
-		"PUBLISH_ADDR":        config.PublishAddr,
-		"PUBLISH_PORT":        config.PublishPort,
-		"RABBIT_URL":          config.RabbitURL,
-		"RABBIT_USER":         config.RabbitUsername,
-		"RABBIT_CONNECTION":   config.RabbitConnection,
-		"OUTPUT_FORMAT":       config.OutputFormat,
-		"RABBIT_CAPABILITIES": formatCapabilities(config.RabbitCapabilities),
-		"RABBIT_EXPORTERS":    config.EnabledExporters,
-		"CAFILE":              config.CAFile,
-		"CERTFILE":            config.CertFile,
-		"KEYFILE":             config.KeyFile,
-		"SKIPVERIFY":          config.InsecureSkipVerify,
-		"EXCLUDE_METRICS":     config.ExcludeMetrics,
-		"SKIP_EXCHANGES":      config.SkipExchanges.String(),
-		"INCLUDE_EXCHANGES":   config.IncludeExchanges.String(),
-		"SKIP_QUEUES":         config.SkipQueues.String(),
-		"INCLUDE_QUEUES":      config.IncludeQueues.String(),
-		"SKIP_VHOST":          config.SkipVHost.String(),
-		"INCLUDE_VHOST":       config.IncludeVHost.String(),
-		"RABBIT_TIMEOUT":      config.Timeout,
-		"MAX_QUEUES":          config.MaxQueues,
-		//		"RABBIT_PASSWORD": config.RABBIT_PASSWORD,
-	}).Info("Active Configuration")
+	slog.Info("Active Configuration",
+			  "RABBIT_URL",          config.RabbitURL,
+			  "RABBIT_USER",         config.RabbitUsername,
+			  "RABBIT_CONNECTION",   config.RabbitConnection,
+			  "OUTPUT_FORMAT",       config.OutputFormat,
+			  "RABBIT_CAPABILITIES", formatCapabilities(config.RabbitCapabilities),
+			  "RABBIT_EXPORTERS",    config.EnabledExporters,
+			  "CAFILE",              config.CAFile,
+			  "CERTFILE",            config.CertFile,
+			  "KEYFILE",             config.KeyFile,
+			  "SKIPVERIFY",          config.InsecureSkipVerify,
+			  "EXCLUDE_METRICS",     config.ExcludeMetrics,
+			  "SKIP_EXCHANGES",      config.SkipExchanges.String(),
+			  "INCLUDE_EXCHANGES",   config.IncludeExchanges.String(),
+			  "SKIP_QUEUES",         config.SkipQueues.String(),
+			  "INCLUDE_QUEUES",      config.IncludeQueues.String(),
+			  "SKIP_VHOST",          config.SkipVHost.String(),
+			  "INCLUDE_VHOST",       config.IncludeVHost.String(),
+			  "RABBIT_TIMEOUT",      config.Timeout,
+			  "MAX_QUEUES",          config.MaxQueues,
 
-	handler := http.NewServeMux()
-	handler.Handle("/metrics", promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{}))
-	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	)
+
+	http.Handle("/metrics", promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{}))
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(`<html>
              <head><title>RabbitMQ Exporter</title></head>
              <body>
@@ -95,7 +100,7 @@ func main() {
              </body>
              </html>`))
 	})
-	handler.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		if exporter.LastScrapeOK() {
 			w.WriteHeader(http.StatusOK)
 		} else {
@@ -103,31 +108,24 @@ func main() {
 		}
 	})
 
-	server := &http.Server{Addr: config.PublishAddr + ":" + config.PublishPort, Handler: handler}
+	server := &http.Server{}
 
 	go func() {
-		if err := server.ListenAndServe(); err != nil {
-			log.Fatal(err)
+		if err := web.ListenAndServe(server, webFlags, slog.Default()); err != nil {
+			slog.Any("fatal error", err)
+			panic(err)
 		}
 	}()
 
 	<-runService()
-	log.Info("Shutting down")
+	slog.Info("Shutting down")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	if err := server.Shutdown(ctx); err != nil {
-		log.Fatal(err)
+		slog.Any("fatal error", err)
+		panic(err)
 	}
 	cancel()
-}
-
-func getLogLevel() log.Level {
-	lvl := strings.ToLower(os.Getenv("LOG_LEVEL"))
-	level, err := log.ParseLevel(lvl)
-	if err != nil {
-		level = defaultLogLevel
-	}
-	return level
 }
 
 func formatCapabilities(caps rabbitCapabilitySet) string {

@@ -1,8 +1,8 @@
 package testenv
 
 import (
-	"log"
-
+	"log/slog"
+	"os"
 	"time"
 
 	"github.com/streadway/amqp"
@@ -16,13 +16,15 @@ type rabbit struct {
 func (r *rabbit) connect(url string) {
 	conn, err := amqp.Dial(url)
 	if err != nil {
-		log.Fatalf("Failed to connect to RabbitMQ:%s", err)
+		slog.Error("Failed to connect to RabbitMQ", "error", err)
+		os.Exit(1)
 	}
 	r.conn = conn
 
 	ch, err := conn.Channel()
 	if err != nil {
-		log.Fatalf("Failed to open a channel: %s", err)
+		slog.Error("Failed to open a channel", "error", err)
+		os.Exit(1)
 	}
 	r.channel = ch
 }
@@ -37,7 +39,8 @@ func (r *rabbit) DeclareQueue(name string, durable bool) {
 		nil,     // arguments
 	)
 	if err != nil {
-		log.Fatalf("Failed to declare a queue: %s", err)
+		slog.Error("Failed to declare a queue", "error", err)
+		os.Exit(1)
 	}
 }
 
@@ -56,6 +59,6 @@ func (r *rabbit) SendMessageToQ(body string, routingKey string, timestamp *time.
 		false,      // immediate
 		pub)
 	if err != nil {
-		log.Fatalf("Failed to publish a message:%s . Error:%s", body, err)
+		slog.Error("Failed to publish a message", "body", body, "error", err)
 	}
 }

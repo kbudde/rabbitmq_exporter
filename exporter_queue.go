@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/prometheus/client_golang/prometheus"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 )
 
 func init() {
@@ -140,10 +140,7 @@ func (e exporterQueue) Collect(ctx context.Context, ch chan<- prometheus.Metric)
 		}
 
 		if totalQueues > config.MaxQueues {
-			log.WithFields(log.Fields{
-				"MaxQueues":   config.MaxQueues,
-				"TotalQueues": totalQueues,
-			}).Debug("MaxQueues exceeded.")
+			slog.Debug("MaxQueues exceeded.", "MaxQueues", config.MaxQueues, "TotalQueues", totalQueues)
 			return nil
 		}
 	}
@@ -162,7 +159,7 @@ func (e exporterQueue) Collect(ctx context.Context, ch chan<- prometheus.Metric)
 		return err
 	}
 
-	log.WithField("queueData", rabbitMqQueueData).Debug("Queue data")
+	slog.Debug("Queue data", "queueData", rabbitMqQueueData)
 	for _, queue := range rabbitMqQueueData {
 		qname := queue.labels["name"]
 		vname := queue.labels["vhost"]
@@ -184,7 +181,6 @@ func (e exporterQueue) Collect(ctx context.Context, ch chan<- prometheus.Metric)
 
 		for key, gaugevec := range e.queueMetricsGauge {
 			if value, ok := queue.metrics[key]; ok {
-				// log.WithFields(log.Fields{"vhost": queue.labels["vhost"], "queue": queue.labels["name"], "key": key, "value": value}).Info("Set queue metric for key")
 				gaugevec.WithLabelValues(labelValues...).Set(value)
 			}
 		}
@@ -209,7 +205,8 @@ func (e exporterQueue) Collect(ctx context.Context, ch chan<- prometheus.Metric)
 				}
 				e.idleSinceMetric.WithLabelValues(labelValues...).Set(unixSeconds)
 			} else {
-				log.WithError(err).WithField("idle_since", idleSince).Warn("error parsing idle since time")
+				slog.Warn("error parsing idle since time", "idle_since", idleSince)
+				slog.Any("error", err)
 			}
 		}
 		e.stateMetric.WithLabelValues(append(labelValues, state)...).Set(1)

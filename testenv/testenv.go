@@ -4,7 +4,7 @@ package testenv
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -13,7 +13,7 @@ import (
 
 	"os"
 
-	"log"
+	"log/slog"
 
 	dockertest "github.com/ory/dockertest/v3"
 )
@@ -66,7 +66,8 @@ func NewEnvironment(t *testing.T, dockerTag string) TestEnvironment {
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	if err := tenv.docker.Retry(checkManagementWebsite); err != nil {
 		perr := tenv.docker.Purge(resource)
-		log.Fatalf("Could not connect to docker: %s; Purge Error: %s", err, perr)
+		slog.Error("Could not connect to docker", "error", err, "purgeError", perr)
+		os.Exit(1)
 	}
 
 	r := rabbit{}
@@ -114,7 +115,7 @@ func GetURL(url string, timeout time.Duration) (string, error) {
 		return "", err
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	resp.Body.Close()
 
 	return string(body), err
@@ -124,7 +125,8 @@ func GetURL(url string, timeout time.Duration) (string, error) {
 func GetOrDie(url string, timeout time.Duration) string {
 	body, err := GetURL(url, timeout)
 	if err != nil {
-		log.Fatalf("Failed to get url in time: %s", err)
+		slog.Error("Failed to get url in time", "error", err)
+		os.Exit(1)
 	}
 	return body
 }
@@ -137,13 +139,15 @@ func (tenv *TestEnvironment) MustSetPolicy(name string, pattern string) {
 	client := &http.Client{}
 	request, err := http.NewRequest("PUT", url, strings.NewReader(policy))
 	if err != nil {
-		log.Fatal(fmt.Errorf("could not create NewRequest: %w", err))
+		slog.Error("could not create NewRequest", "error", err)
+		os.Exit(1)
 	}
 	request.Header.Add("Content-Type", "application/json")
 	request.ContentLength = int64(len(policy))
 	response, err := client.Do(request)
 	if err != nil {
-		log.Fatal(err)
+		slog.Any("error", err)
+		os.Exit(1)
 	} else {
 		response.Body.Close()
 	}

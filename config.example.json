@@ -2,8 +2,6 @@
     "rabbit_url": "http://127.0.0.1:15672",
     "rabbit_user": "guest",
     "rabbit_pass": "guest",
-    "publish_port": "9419",
-    "publish_addr": "",
     "output_format": "TTY",
     "ca_file": "ca.pem",
     "cert_file": "client-cert.pem",

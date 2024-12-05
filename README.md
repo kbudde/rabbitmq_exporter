@@ -39,9 +39,17 @@ Rabbitmq_exporter can be configured using json config file or environment variab
 Rabbitmq_exporter expects config file in "conf/rabbitmq.conf". If you are running the exporter in a container (docker/kubernetes) the config must be in "/conf/rabbitmq.conf"
 The name of the file can be overriden with flag:
 
-    ./rabbitmq_exporter -config-file config.example.json
+    ./rabbitmq_exporter --config-file config.example.json --web.config.file web_config.yml --web.listen-address 127.0.0.1:9419
 
 You can find an example [here](config.example.json). *Note:* If you are using a config file, you must provide all values as there is no default value.
+
+## TLS and basic authentication
+
+The RabbitMQ Exporter supports TLS and basic authentication.
+
+To use TLS and/or basic authentication, you need to pass a configuration file
+using the `--web.config.file` parameter. The format of the file is described
+[in the exporter-toolkit repository](https://github.com/prometheus/exporter-toolkit/blob/master/docs/web-configuration.md).
 
 ### Settings
 
@@ -53,10 +61,8 @@ RABBIT_PASSWORD | guest | password for rabbitMQ management plugin
 RABBIT_CONNECTION | direct | direct or loadbalancer, strips the self label when loadbalancer
 RABBIT_USER_FILE| | location of file with username (useful for docker secrets)
 RABBIT_PASSWORD_FILE | | location of file with password (useful for docker secrets)
-PUBLISH_PORT | 9419 | Listening port for the exporter
-PUBLISH_ADDR | "" | Listening host/IP for the exporter
 OUTPUT_FORMAT | TTY | Log ouput format. TTY and JSON are suported
-LOG_LEVEL | info | log level. possible values: "debug", "info", "warning", "error", "fatal", or "panic"
+LOG_LEVEL | info | log level. possible case-insensitive values: "debug", "info", "warning", "error"
 CAFILE | ca.pem | path to root certificate for access management plugin. Just needed if self signed certificate is used. Will be ignored if the file does not exist
 CERTFILE | client-cert.pem | path to client certificate used to verify the exporter's authenticity. Will be ignored if the file does not exist
 KEYFILE | client-key.pem | path to private key used with certificate to verify the exporter's authenticity. Will be ignored if the file does not exist
