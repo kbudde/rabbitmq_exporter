@@ -59,7 +59,7 @@ metric | description
 |queue_max_length|How many (ready) messages a queue can contain before it starts to drop them from its head.|
 |queue_idle_since_seconds|starttime where the queue switched to idle state; seconds since epoch (1970); only set if queue state is idle|
 |queue_reductions_total|Number of reductions which take place on this process.|
-|queue_state|A metric with a value of constant '1' if the queue is in a certain state. Labels: vhost, queue, *state* (running, idle, flow,..)|
+|queue_state|A metric with a value of queue state, 1(running,idle), 0(flow,blocked,unblocked) Labels: vhost, queue, *state* (running, idle, flow,..)|
 |queue_slave_nodes_len|Number of slave nodes attached to the queue|
 |queue_synchronised_slave_nodes_len|Number of slave nodes in sync to the queue|
 
