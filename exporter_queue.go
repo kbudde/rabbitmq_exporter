@@ -97,7 +97,7 @@ func newExporterQueue() Exporter {
 		limitsGauge:         litmitsGaugeVecActual,
 		queueMetricsGauge:   queueGaugeVecActual,
 		queueMetricsCounter: queueCounterVecActual,
-		stateMetric:         newGaugeVec("queue_state", "A metric with a value of constant '1' if the queue is in a certain state", append(queueLabels, "state")),
+		stateMetric:         newGaugeVec("queue_state", "A metric with a value of queue state, 1(running,idle), 0(flow,blocked,unblocked)", append(queueLabels, "state")),
 		idleSinceMetric:     newGaugeVec("queue_idle_since_seconds", "starttime where the queue switched to idle state; in seconds since epoch (1970).", queueLabels),
 	}
 }
@@ -212,7 +212,14 @@ func (e exporterQueue) Collect(ctx context.Context, ch chan<- prometheus.Metric)
 				log.WithError(err).WithField("idle_since", idleSince).Warn("error parsing idle since time")
 			}
 		}
-		e.stateMetric.WithLabelValues(append(labelValues, state)...).Set(1)
+
+		switch state {
+		case "idle", "running":
+			e.stateMetric.WithLabelValues(append(labelValues, state)...).Set(1)
+		default:
+			// flow,blocked,unblocked
+			e.stateMetric.WithLabelValues(append(labelValues, state)...).Set(0)
+		}
 
 		if _, ok := limitsGaugeVec["max-length"]; ok {
 			if f := collectLowerMetric("arguments.x-max-length", "effective_policy_definition.max-length", queue); f >= 0 {
