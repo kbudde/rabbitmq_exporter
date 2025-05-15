@@ -52,7 +52,7 @@ type rabbitExporterConfig struct {
 	CertFile                 string              `json:"cert_file"`
 	KeyFile                  string              `json:"key_file"`
 	InsecureSkipVerify       bool                `json:"insecure_skip_verify"`
-	ExcludeMetrics           []string            `json:"exlude_metrics"`
+	ExcludeMetrics           []string            `json:"exclude_metrics"`
 	SkipExchanges            *regexp.Regexp      `json:"-"`
 	IncludeExchanges         *regexp.Regexp      `json:"-"`
 	SkipQueues               *regexp.Regexp      `json:"-"`

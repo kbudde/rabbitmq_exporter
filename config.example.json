@@ -9,7 +9,7 @@
     "cert_file": "client-cert.pem",
     "key_file": "client-key.pem",
     "insecure_skip_verify": false,
-    "exlude_metrics": [],
+    "exclude_metrics": [],
     "include_exchanges": ".*",
     "skip_exchanges": "^$",
     "include_queues": ".*",
