@@ -813,9 +813,9 @@ func TestFederation(t *testing.T) {
 		t.Log(strings.Join(reg.FindAllString(body, -1), "\n"))
 
 		expectSubstring(t, body, `rabbitmq_module_up{cluster="my-rabbit@ae74c041248b",module="federation",node="my-rabbit@ae74c041248b"} 1`)
-		expectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="",node="my-rabbit@ae74c041248b",queue="test_queue1",self="1",status="running",vhost="/"} 1`)
-		expectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="",node="rabbit@dc1rbmq1",queue="test_queue2",self="0",status="starting",vhost="/"} 1`)
-		expectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="test_exchange1",node="rabbit@dc1rbmq1",queue="",self="0",status="running",vhost="/"} 1`)
+		expectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="",node="my-rabbit@ae74c041248b",queue="test_queue1",self="1",status="running",upstream="root",upstream_exchange="",upstream_queue="test_queue1",uri="amqp://192.168.34.2",vhost="/"} 1`)
+		expectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="",node="rabbit@dc1rbmq1",queue="test_queue2",self="0",status="starting",upstream="root",upstream_exchange="",upstream_queue="test_queue2",uri="amqp://192.168.34.2",vhost="/"} 1`)
+		expectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="test_exchange1",node="rabbit@dc1rbmq1",queue="",self="0",status="running",upstream="root",upstream_exchange="test_exchange1",upstream_queue="",uri="amqp://192.168.34.2",vhost="/"} 1`)
 
 	})
 
@@ -831,9 +831,9 @@ func TestFederation(t *testing.T) {
 		t.Log(strings.Join(reg.FindAllString(body, -1), "\n"))
 
 		expectSubstring(t, body, `rabbitmq_module_up{cluster="my-rabbit@ae74c041248b",module="federation",node="my-rabbit@ae74c041248b"} 0`)
-		dontExpectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="",node="my-rabbit@ae74c041248b",queue="test_queue1",self="0",status="running",vhost="/"} 1`)
-		dontExpectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="",node="rabbit@dc1rbmq1",queue="test_queue2",self="0",status="starting",vhost="/"} 1`)
-		dontExpectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="test_exchange1",node="rabbit@dc1rbmq1",queue="",self="0",status="running",vhost="/"} 1`)
+		dontExpectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="",node="my-rabbit@ae74c041248b",queue="test_queue1",self="0",status="running",upstream="root",upstream_exchange="",upstream_queue="test_queue1",uri="amqp://192.168.34.2",vhost="/"} 1`)
+		dontExpectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="",node="rabbit@dc1rbmq1",queue="test_queue2",self="0",status="starting",upstream="root",upstream_exchange="",upstream_queue="test_queue2",uri="amqp://192.168.34.2",vhost="/"} 1`)
+		dontExpectSubstring(t, body, `rabbitmq_federation_state{cluster="my-rabbit@ae74c041248b",exchange="test_exchange1",node="rabbit@dc1rbmq1",queue="",self="0",status="running",upstream="root",upstream_exchange="test_exchange1",upstream_queue="",uri="amqp://192.168.34.2",vhost="/"} 1`)
 
 	})
 
