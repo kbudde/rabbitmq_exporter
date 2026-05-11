@@ -9,7 +9,7 @@ RUN apk add --no-cache ca-certificates
 FROM scratch AS final
 
 # Add maintainer label in case somebody has questions.
-LABEL maintainer="Kris.Budde@gmail.com"
+LABEL maintainer="yoelpadronglez,pnowy"
 
 # Import the Certificate-Authority certificates for enabling HTTPS.
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
