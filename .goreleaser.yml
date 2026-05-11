@@ -28,97 +28,97 @@ release:
   footer: |
     ## Docker images
 
-    - `docker pull ghcr.io/kbudde/rabbitmq_exporter:{{.Version}}`
-    - `docker pull ghcr.io/kbudde/rabbitmq_exporter:{{.ShortCommit}}`
-    - `docker pull kbudde/rabbitmq-exporter:{{.Version}}`
-    - `docker pull kbudde/rabbitmq-exporter:{{.ShortCommit}}`
+    - `docker pull ghcr.io/yoelpadronglez/rabbitmq_exporter:{{.Version}}`
+    - `docker pull ghcr.io/yoelpadronglez/rabbitmq_exporter:{{.ShortCommit}}`
+    - `docker pull yoelpadronglez/rabbitmq-exporter:{{.Version}}`
+    - `docker pull yoelpadronglez/rabbitmq-exporter:{{.ShortCommit}}`
 
 dockers:
 - goos: linux
   goarch: amd64
   image_templates:
-    - "kbudde/rabbitmq-exporter:linux-amd64-{{.ShortCommit}}"
-    - "ghcr.io/kbudde/rabbitmq_exporter:linux-amd64-{{.ShortCommit}}"
+    - "yoelpadronglez/rabbitmq-exporter:linux-amd64-{{.ShortCommit}}"
+    - "ghcr.io/yoelpadronglez/rabbitmq_exporter:linux-amd64-{{.ShortCommit}}"
   use: buildx
   build_flag_templates:
   - "--label=org.opencontainers.image.created={{.Date}}"
   - "--label=org.opencontainers.image.title={{.ProjectName}}"
   - "--label=org.opencontainers.image.revision={{.FullCommit}}"
   - "--label=org.opencontainers.image.version={{.Version}}"
-  - "--label=org.opencontainers.image.source=https://github.com/kbudde/rabbitmq_exporter"
+  - "--label=org.opencontainers.image.source=https://github.com/yoelpadronglez/rabbitmq_exporter"
   - "--platform=linux/amd64"
 
 - goos: linux
   goarch: arm
   goarm: "6"
   image_templates:
-  - "kbudde/rabbitmq-exporter:linux-arm6-{{.ShortCommit}}"
-  - "ghcr.io/kbudde/rabbitmq_exporter:linux-arm6-{{.ShortCommit}}"
+  - "yoelpadronglez/rabbitmq-exporter:linux-arm6-{{.ShortCommit}}"
+  - "ghcr.io/yoelpadronglez/rabbitmq_exporter:linux-arm6-{{.ShortCommit}}"
   use: buildx
   build_flag_templates:
   - "--label=org.opencontainers.image.created={{.Date}}"
   - "--label=org.opencontainers.image.title={{.ProjectName}}"
   - "--label=org.opencontainers.image.revision={{.FullCommit}}"
   - "--label=org.opencontainers.image.version={{.Version}}"
-  - "--label=org.opencontainers.image.source=https://github.com/kbudde/rabbitmq_exporter"
+  - "--label=org.opencontainers.image.source=https://github.com/yoelpadronglez/rabbitmq_exporter"
   - "--platform=linux/arm/v6"
 
 - goos: linux
   goarch: arm
   goarm: "7"
   image_templates:
-  - "kbudde/rabbitmq-exporter:linux-arm7-{{.ShortCommit}}"
-  - "ghcr.io/kbudde/rabbitmq_exporter:linux-arm7-{{.ShortCommit}}"
+  - "yoelpadronglez/rabbitmq-exporter:linux-arm7-{{.ShortCommit}}"
+  - "ghcr.io/yoelpadronglez/rabbitmq_exporter:linux-arm7-{{.ShortCommit}}"
   use: buildx
   build_flag_templates:
   - "--label=org.opencontainers.image.created={{.Date}}"
   - "--label=org.opencontainers.image.title={{.ProjectName}}"
   - "--label=org.opencontainers.image.revision={{.FullCommit}}"
   - "--label=org.opencontainers.image.version={{.Version}}"
-  - "--label=org.opencontainers.image.source=https://github.com/kbudde/rabbitmq_exporter"
+  - "--label=org.opencontainers.image.source=https://github.com/yoelpadronglez/rabbitmq_exporter"
   - "--platform=linux/arm/v7"
 
 - goos: linux
   goarch: arm64
   image_templates:
-  - "kbudde/rabbitmq-exporter:linux-arm64-{{.ShortCommit}}"
-  - "ghcr.io/kbudde/rabbitmq_exporter:linux-arm64-{{.ShortCommit}}"
+  - "yoelpadronglez/rabbitmq-exporter:linux-arm64-{{.ShortCommit}}"
+  - "ghcr.io/yoelpadronglez/rabbitmq_exporter:linux-arm64-{{.ShortCommit}}"
   use: buildx
   build_flag_templates:
   - "--label=org.opencontainers.image.created={{.Date}}"
   - "--label=org.opencontainers.image.title={{.ProjectName}}"
   - "--label=org.opencontainers.image.revision={{.FullCommit}}"
   - "--label=org.opencontainers.image.version={{.Version}}"
-  - "--label=org.opencontainers.image.source=https://github.com/kbudde/rabbitmq_exporter"
+  - "--label=org.opencontainers.image.source=https://github.com/yoelpadronglez/rabbitmq_exporter"
   - "--platform=linux/arm64"
 
 
 docker_manifests:
 -
-  name_template: ghcr.io/kbudde/rabbitmq_exporter:latest
+  name_template: ghcr.io/yoelpadronglez/rabbitmq_exporter:latest
   image_templates:
-  - ghcr.io/kbudde/rabbitmq_exporter:linux-amd64-{{.ShortCommit}}
-  - ghcr.io/kbudde/rabbitmq_exporter:linux-arm6-{{.ShortCommit}}
-  - ghcr.io/kbudde/rabbitmq_exporter:linux-arm7-{{.ShortCommit}}
-  - ghcr.io/kbudde/rabbitmq_exporter:linux-arm64-{{.ShortCommit}}
+  - ghcr.io/yoelpadronglez/rabbitmq_exporter:linux-amd64-{{.ShortCommit}}
+  - ghcr.io/yoelpadronglez/rabbitmq_exporter:linux-arm6-{{.ShortCommit}}
+  - ghcr.io/yoelpadronglez/rabbitmq_exporter:linux-arm7-{{.ShortCommit}}
+  - ghcr.io/yoelpadronglez/rabbitmq_exporter:linux-arm64-{{.ShortCommit}}
 -
-  name_template: kbudde/rabbitmq-exporter:latest
+  name_template: yoelpadronglez/rabbitmq-exporter:latest
   image_templates:
-  - kbudde/rabbitmq-exporter:linux-amd64-{{.ShortCommit}}
-  - kbudde/rabbitmq-exporter:linux-arm6-{{.ShortCommit}}
-  - kbudde/rabbitmq-exporter:linux-arm7-{{.ShortCommit}}
-  - kbudde/rabbitmq-exporter:linux-arm64-{{.ShortCommit}}
+  - yoelpadronglez/rabbitmq-exporter:linux-amd64-{{.ShortCommit}}
+  - yoelpadronglez/rabbitmq-exporter:linux-arm6-{{.ShortCommit}}
+  - yoelpadronglez/rabbitmq-exporter:linux-arm7-{{.ShortCommit}}
+  - yoelpadronglez/rabbitmq-exporter:linux-arm64-{{.ShortCommit}}
 -
-  name_template: ghcr.io/kbudde/rabbitmq_exporter:{{.Version}}
+  name_template: ghcr.io/yoelpadronglez/rabbitmq_exporter:{{.Version}}
   image_templates:
-  - ghcr.io/kbudde/rabbitmq_exporter:linux-amd64-{{.ShortCommit}}
-  - ghcr.io/kbudde/rabbitmq_exporter:linux-arm6-{{.ShortCommit}}
-  - ghcr.io/kbudde/rabbitmq_exporter:linux-arm7-{{.ShortCommit}}
-  - ghcr.io/kbudde/rabbitmq_exporter:linux-arm64-{{.ShortCommit}}
+  - ghcr.io/yoelpadronglez/rabbitmq_exporter:linux-amd64-{{.ShortCommit}}
+  - ghcr.io/yoelpadronglez/rabbitmq_exporter:linux-arm6-{{.ShortCommit}}
+  - ghcr.io/yoelpadronglez/rabbitmq_exporter:linux-arm7-{{.ShortCommit}}
+  - ghcr.io/yoelpadronglez/rabbitmq_exporter:linux-arm64-{{.ShortCommit}}
 -
-  name_template: kbudde/rabbitmq-exporter:{{.Version}}
+  name_template: yoelpadronglez/rabbitmq-exporter:{{.Version}}
   image_templates:
-  - kbudde/rabbitmq-exporter:linux-amd64-{{.ShortCommit}}
-  - kbudde/rabbitmq-exporter:linux-arm6-{{.ShortCommit}}
-  - kbudde/rabbitmq-exporter:linux-arm7-{{.ShortCommit}}
-  - kbudde/rabbitmq-exporter:linux-arm64-{{.ShortCommit}}
+  - yoelpadronglez/rabbitmq-exporter:linux-amd64-{{.ShortCommit}}
+  - yoelpadronglez/rabbitmq-exporter:linux-arm6-{{.ShortCommit}}
+  - yoelpadronglez/rabbitmq-exporter:linux-arm7-{{.ShortCommit}}
+  - yoelpadronglez/rabbitmq-exporter:linux-arm64-{{.ShortCommit}}
