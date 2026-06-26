@@ -14,7 +14,7 @@ jobs:
       with:
         go-version: '1.21'
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     - name: run tests
       run: |
         export GOPATH=$HOME/go
